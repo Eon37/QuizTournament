@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html style="font-size: 16px;" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <title>CreateQuiz</title>
+    <link rel="stylesheet" href="/CreateQuiz.css" media="screen">
+    <link rel="stylesheet" href="/common.css" media="screen">
+    <link href="https://fonts.googleapis.com/css2?family=Amatic+SC&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Oswald" rel="stylesheet">
+
+    <meta name="theme-color" content="#478ac9">
+  </head>
+  <body class="c-body">
+    <header class="c-header">
+      <div> <!-- must have -->
+        <div class="c-header-elements c-margin-width-wide c-margin-width-mobile">
+          <div style="display: flex; flex-direction: row; align-items: center;">
+            <a href="/api/quizzes"
+               style="width: 60px; height: 60px; background-image: url(/images/633ba56ef8567689756d113cc10bc437c94a892b68d055f4a9b753756f5da8aee1e1623da0dc57d836483cd8fd65ec6d320e572d3b88aec105e9fc_1280.png); background-size: cover;"></a>
+            <h6 class="header-logo">
+              <a href="/api/quizzes" style="color: white; background-color: transparent; text-decoration: none;">Quiz
+                Tournament</a>
+            </h6>
+          </div>
+
+          <nav>
+            <!--          <a href="/api/quizzes" style = "color: white; background-color: transparent; text-decoration: none; margin-right: 20px;">Home</a>-->
+            <!--          <a th:href="@{/api/users/current}" style = "color: white; background-color: transparent; text-decoration: none; margin-right: 20px;">My profile</a>-->
+          </nav>
+
+          <div style="display: flex; flex-direction: row; justify-content: space-between; align-items: center;">
+
+            <div class="header-user-gradient-border">
+              <a href="#user-menu">
+                <div class="header-user-image-container">
+                  <img th:if="${currentUser != null}" class="header-user"
+                       th:src="@{'data:' + ${currentUser.image.getMimeType()} + ';base64,'+ ${currentUser.image.getData()}}"
+                       alt="" data-image-width="100" data-image-height="100">
+                  <img th:if="${currentUser == null}" class="header-user" th:src="@{'/images/users/user-header.png'}"
+                       alt="" data-image-width="30" data-image-height="30">
+                </div>
+              </a>
+            </div>
+
+            <div id="user-menu" class="overlay">
+              <div class="popup popup-wide popup-mobile">
+                <div style="display: flex; flex-direction: row; justify-content: space-between; align-items:center;">
+                  <div th:if="${currentUser == null}" id="anon-opts" style="display: flex; flex-direction: column;">
+                    <a th:href="@{/login}" style="margin-bottom: 5px;">
+                      <input type="button" value="Log in"/>
+                    </a>
+                    <a th:href="@{/api/register}">
+                      <input type="button" value="Sign in"/>
+                    </a>
+                  </div>
+                  <div th:if="${currentUser != null}" id="logged-opts" style="display: flex; flex-direction: column;">
+                    <a th:href="@{/api/users/current}" style="margin-bottom: 5px;">
+                      <input type="button" value="Profile"/>
+                    </a>
+                    <form th:action="@{/logout}" method="post">
+                      <input type="submit" value="Log out"/>
+                    </form>
+                  </div>
+                  <div>
+                    <a class="close" href="#">X</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+    <section>
+
+      <h2 align="center" th:text="(${emptyQuiz.id == null} ? 'Create' : 'Update') + ' quiz'"></h2>
+      <form action="#" th:action="@{/api/quizzes}" th:object="${emptyQuiz}" method="post" enctype="multipart/form-data"
+            style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+        <div class="form-wide form-mobile">
+
+          <div style="display: flex; flex-direction: column; align-items: flex-start; justify-content: center;">
+            <p>Information:</p>
+
+            <input hidden type="text" th:field="*{id}"/>
+            <input type="text" th:field="*{title}">
+            <input type="text" th:field="*{description}">
+            <input type="text" th:field="*{text}">
+
+            <div style="display: flex; flex-direction: row; align-items: center;">
+              <p>Upload image:</p>
+              <input type="file" th:name="file" class="a_btn btn" style="margin-top: 10px; margin-left: 20px;">
+            </div>
+          </div>
+
+          <div style="display: flex; flex-direction: column; align-items: flex-start; justify-content: center;">
+            <p>Options:</p>
+
+            <ul>
+              <li th:each="option, state : ${emptyQuiz.options}">
+                <input type="checkbox" th:field="*{answer}" th:value="${state.index}">
+                <input type="text" id="options" name="options" th:value="${option}">
+              </li>
+            </ul>
+
+          </div>
+        </div>
+
+        <input type="submit" class="btn"/>
+      </form>
+
+    </section>
+
+    <footer style="background-color: #252525; color: #ffffff; text-align: center; height: 6.4rem;">
+      <div>
+        <p>Quiz Tournament<br></p>
+      </div>
+    </footer>
+  </body>
+</html>

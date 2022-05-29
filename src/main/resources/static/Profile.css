@@ -1,0 +1,72 @@
+.user-fields-icon {
+  width: 100%;
+  height: 100%;
+}
+
+input {
+  box-sizing: border-box;
+}
+
+.q-text {
+  font-family: 'Oswald';
+  font-size: 20px;
+  color: white;
+  text-shadow: 0 0 5px #000;
+}
+
+.list-image {
+  height: 100%;
+  width: auto;
+}
+
+.list-img-container {
+   height: 100%;
+   display: inline-block;
+   cursor: pointer;
+   position: relative;
+}
+
+.list-container {
+  white-space: nowrap;
+  overflow-y: hidden;
+  height: 100%
+}
+
+.fade {
+  opacity: 0;
+}
+
+.fade:hover {
+  opacity: 1;
+}
+
+.gray-box {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-image: linear-gradient(0deg, rgba(0,0,0,0.2), rgba(0,0,0,0.2));
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+@media only screen and (min-width: 801px) {
+  .update-user-area {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+  }
+}
+
+@media only screen and (max-width: 800px) {
+  .update-user-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .user-photo {
+    margin-top: 10px;
+  }
+}

@@ -1,0 +1,24 @@
+.com-grid {
+  display: grid;
+  grid-gap: 10px;
+  grid-template-rows: repeat(10, lfr); /* default comments size */
+  min-height: 64px;
+}
+
+.com-background {
+  background-image: linear-gradient(white, #d9d9d9);
+  padding: 0 10px;
+}
+
+.com-image {
+  width: 60px;
+  height: 60px;
+  margin: 0 10px 0 0;
+  border-width: 1px;
+}
+
+.com-text {
+    margin: 0px;
+    font-family: 'Oswald';
+    font-size: 18px;
+}

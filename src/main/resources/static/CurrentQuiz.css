@@ -1,0 +1,26 @@
+.q_img {
+  width: 400px;
+  height: 400px;
+}
+
+@media only screen and (max-width: 801px) {
+  .main-area {
+    flex-direction: column;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}
+
+@media only screen and (min-width: 801px) {
+  .main-area {
+    flex-direction: row;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .pad-left {
+    padding-left: 150px;
+  }
+}

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html style="font-size: 16px;" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <title>Home</title>
+    <link rel="stylesheet" href="/Home.css" media="screen">
+    <link rel="stylesheet" href="/common.css" media="screen">
+    <link href="https://fonts.googleapis.com/css2?family=Amatic+SC&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Oswald" rel="stylesheet">
+
+    <meta name="theme-color" content="#478ac9">
+  </head>
+  <body class="c-body">
+    <header class="c-header">
+      <div>
+        <div class="c-header-elements c-margin-width-wide c-margin-width-mobile">
+          <div style="display: flex; flex-direction: row; align-items: center;">
+            <a href="/api/quizzes"
+               style="width: 60px; height: 60px; background-image: url(/images/633ba56ef8567689756d113cc10bc437c94a892b68d055f4a9b753756f5da8aee1e1623da0dc57d836483cd8fd65ec6d320e572d3b88aec105e9fc_1280.png); background-size: cover;"></a>
+            <h6 class="header-logo">
+              <a href="/api/quizzes" style="color: white; background-color: transparent; text-decoration: none;">Quiz
+                Tournament</a>
+            </h6>
+          </div>
+
+          <nav>
+            <!--          <a href="/api/quizzes" style = "color: white; background-color: transparent; text-decoration: none; margin-right: 20px;">Home</a>-->
+            <!--          <a th:href="@{/api/users/current}" style = "color: white; background-color: transparent; text-decoration: none; margin-right: 20px;">My profile</a>-->
+          </nav>
+
+          <div style="display: flex; flex-direction: row; justify-content: space-between; align-items: center;">
+
+            <div class="header-user-gradient-border">
+              <a href="#user-menu">
+                <div class="header-user-image-container">
+                  <img th:if="${currentUser != null}" class="header-user"
+                       th:src="@{'data:' + ${currentUser.image.getMimeType()} + ';base64,'+ ${currentUser.image.getData()}}"
+                       alt="" data-image-width="100" data-image-height="100">
+                  <img th:if="${currentUser == null}" class="header-user" th:src="@{'/images/users/user-header.png'}"
+                       alt="" data-image-width="30" data-image-height="30">
+                </div>
+              </a>
+            </div>
+
+            <div id="user-menu" class="overlay">
+              <div class="popup popup-wide popup-mobile">
+                <div style="display: flex; flex-direction: row; justify-content: space-between; align-items:center;">
+                  <div th:if="${currentUser == null}" id="anon-opts" style="display: flex; flex-direction: column;">
+                    <a th:href="@{/login}" style="margin-bottom: 5px;">
+                      <input type="button" value="Log in"/>
+                    </a>
+                    <a th:href="@{/api/register}">
+                      <input type="button" value="Sign in"/>
+                    </a>
+                  </div>
+                  <div th:if="${currentUser != null}" id="logged-opts" style="display: flex; flex-direction: column;">
+                    <a th:href="@{/api/users/current}" style="margin-bottom: 5px;">
+                      <input type="button" value="Profile"/>
+                    </a>
+                    <form th:action="@{/logout}" method="post">
+                      <input type="submit" value="Log out"/>
+                    </form>
+                  </div>
+                  <div>
+                    <a class="close" href="#">X</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section style="min-height: 600px;">
+      <div class="c-margin-width-wide c-margin-width-mobile">
+        <div style="margin-top: 20px; margin-bottom: 50px;">
+          <div class="main-grid">
+
+            <th:block th:each="quiz : ${quizzes}">
+              <div class="grid-cell">
+                <div th:if="${!quizzes.isEmpty() && quizzes.size() >= 1 && quiz != null}" th:style="'width: 100%; background-image: url(data:' + ${quiz.image.getMimeType()} + ';base64,' + ${quiz.image.getData()} + '); background-size: cover;'">
+                  <div class="grid-cell-info">
+
+                    <div style="padding-left: 10px; padding-right: 10px; padding-top: 10px; z-index: 10;">
+                      <a style="font-family: 'Oswald'; text-align: start; color: white; text-shadow: 0 0 5px #000; text-decoration: none; font-size: 20px;" th:href="@{/api/quizzes/{id}(id=${quiz.id})}">
+                        <h3 th:text="${quiz.title}"></h3>
+                        <p th:text="${quiz.description}"></p>
+                      </a>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+            </th:block>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div style="display: flex; align-items: center; justify-content: space-around; margin-bottom: 20px; margin-top: -30px;">
+        <a th:href="@{/api/quizzes?page={page}&size={size}(page=${prevPage}, size=${pageSize})}" th:if="${prevPage > -1}"  class="a_btn btn">&lt; Back</a>
+        <a th:href="@{/api/quizzes?page={page}&size={size}(page=${nextPage}, size=${pageSize})}" th:if="${showForward == true}"  class="a_btn btn">Forward &gt;</a>
+      </div>
+    </section>
+
+
+    <footer style="background-color: #252525; color: #ffffff; text-align: center; height: 9.2rem;">
+      <div>
+        <p>Quiz Tournament<br></p>
+      </div>
+    </footer>
+  </body>
+</html>
