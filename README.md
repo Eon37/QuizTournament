@@ -16,4 +16,3 @@ Quiz Tournament is a web application that allows you to solve and create quizzes
 	- Add tournament mode
 	- Make customizable win/lose feedback
 	- Add localization
-	- Make the app available through The Internet
