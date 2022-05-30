@@ -1,4 +1,4 @@
-# Quiz Tournament
+# [Quiz Tournament](https://quiz-tournament-app.herokuapp.com/)
 
 Quiz Tournament is a web application that allows you to solve and create quizzes, to have thought-provoking, thrilling, touching or hilarious discussions in the comments section and to have fun in general.
 
