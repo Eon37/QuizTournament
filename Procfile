@@ -1,0 +1,1 @@
+web: java -Djasypt.encryptor.password=quiztournamentthehat -jar Quiz_Tournament-0.0.1-SNAPSHOT.jar
