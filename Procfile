@@ -1,1 +1,1 @@
-web: java -Djasypt.encryptor.password=quiztournamentthehat -jar Quiz_Tournament-0.0.1-SNAPSHOT.jar
+web: java -Dserver.port=8080 -Djasypt.encryptor.password=quiztournamentthehat -jar Quiz_Tournament-0.0.1-SNAPSHOT.jar
