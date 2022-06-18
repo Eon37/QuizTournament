@@ -7,6 +7,7 @@
     <meta name="description" content="">
     <title>CreateQuiz</title>
     <link rel="stylesheet" href="/common.css" media="screen">
+    <link rel="stylesheet" href="/error.css" media="screen">
     <link href="https://fonts.googleapis.com/css2?family=Amatic+SC&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Oswald" rel="stylesheet">
 
@@ -75,11 +76,11 @@
     </header>
 
     <section>
-      <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; font-family: 'Oswald';">
+      <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; font-family: 'Oswald'; word-break: break-word;">
         <p style="font-size: 72px;">Something went wrong</p>
         <p style="font-size: 48px; margin: 0;" th:text="${errorCode}"></p>
         <p style="font-size: 48px; margin: 0;" th:text="${errorMessage}"></p>
-        <img style="align-self: start; margin-left: 15%;" src="/images/whale-g2b7cb9c7a_640.png">
+        <img class="err-img" src="/images/whale-g2b7cb9c7a_640.png">
       </div>
     </section>
 

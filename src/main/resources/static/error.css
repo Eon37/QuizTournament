@@ -1,0 +1,13 @@
+@media only screen and (min-width: 801px) {
+    .err-img {
+      align-self: start;
+      margin-left: 15%;
+    }
+}
+
+@media only screen and (max-width: 800px) {
+    .err-img {
+      align-self: start;
+      width: 100%;
+    }
+}
