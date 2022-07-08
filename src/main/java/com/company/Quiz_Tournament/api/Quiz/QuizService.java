@@ -4,6 +4,7 @@ import com.company.Quiz_Tournament.api.CompletedQuizzes.CompletedQuizzes;
 import com.company.Quiz_Tournament.api.CompletedQuizzes.CompletedQuizzesService;
 import com.company.Quiz_Tournament.api.FeedBack;
 import com.company.Quiz_Tournament.api.QuizImage.ImageType;
+import com.company.Quiz_Tournament.api.QuizImage.QuizImage;
 import com.company.Quiz_Tournament.api.QuizImage.QuizImageService;
 import com.company.Quiz_Tournament.constants.EmptyQuizConstants;
 import com.company.Quiz_Tournament.utils.ContextUtils;
@@ -45,8 +46,8 @@ public class QuizService {
             user.getQuizzes().add(quiz);
 
             quiz.setImage(image.isEmpty()
-                    ? quizImageService.getRandomDefaultImage(ImageType.DEFAULT_QUIZ)
-                    : quizImageService.save(image, ImageType.QUIZ));
+                    ? quizImageService.save(quizImageService.getRandomDefaultImage(ImageType.DEFAULT_QUIZ))
+                    : quizImageService.save(new QuizImage(image.getBytes(), image.getContentType(), ImageType.QUIZ)));
 
             Collection<String> options = filterOptions(quiz.getOptions());
             quiz.setOptions(options);
@@ -78,7 +79,7 @@ public class QuizService {
 
         quiz.setImage(image.isEmpty()
                 ? persistedQuiz.getImage()
-                : quizImageService.save(image, ImageType.QUIZ));
+                : quizImageService.save(new QuizImage(image.getBytes(), image.getContentType(), ImageType.QUIZ)));
 
         Collection<String> options = filterOptions(quiz.getOptions());
         quiz.setOptions(CollectionUtils.isEmpty(options) ? persistedQuiz.getOptions() : options);

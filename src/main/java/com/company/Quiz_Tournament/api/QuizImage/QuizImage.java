@@ -19,7 +19,7 @@ public class QuizImage {
 
     private QuizImage() {}
 
-    QuizImage(byte[] data, String mimeType, ImageType type) {
+    public QuizImage(byte[] data, String mimeType, ImageType type) {
         this.data = data;
         this.mimeType = mimeType;
         this.type = type;

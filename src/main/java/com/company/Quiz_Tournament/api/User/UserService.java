@@ -1,6 +1,7 @@
 package com.company.Quiz_Tournament.api.User;
 
 import com.company.Quiz_Tournament.api.QuizImage.ImageType;
+import com.company.Quiz_Tournament.api.QuizImage.QuizImage;
 import com.company.Quiz_Tournament.configs.UserDetails.CustomUserDetails;
 import com.company.Quiz_Tournament.utils.ContextUtils;
 import com.company.Quiz_Tournament.api.QuizImage.QuizImageService;
@@ -43,8 +44,8 @@ public class UserService {
             user.setPassword(passwordEncoder.encode(user.getNewPassword())); //todo try newPass in @RequestPart
 
             user.setImage(image.isEmpty()
-                    ? quizImageService.getRandomDefaultImage(ImageType.DEFAULT_USER)
-                    : quizImageService.save(image, ImageType.USER));
+                    ? quizImageService.save(quizImageService.getRandomDefaultImage(ImageType.DEFAULT_USER))
+                    : quizImageService.save(new QuizImage(image.getBytes(), image.getContentType(), ImageType.USER)));
 
             return userRepository.save(user);
         }
@@ -64,7 +65,7 @@ public class UserService {
 
         user.setImage(image.isEmpty()
                 ? persistedUser.getImage()
-                : quizImageService.save(image, ImageType.USER));
+                : quizImageService.save(new QuizImage(image.getBytes(), image.getContentType(), ImageType.USER)));
 
         user.setQuizzes(persistedUser.getQuizzes());
         user.setId(persistedUser.getId());
