@@ -5,13 +5,20 @@
     <meta charset="utf-8">
     <meta name="keywords" content="">
     <meta name="description" content="">
-    <title>CurrentQuiz</title>
+    <title th:text="${quiz.title}"></title>
     <link rel="stylesheet" href="/common.css" media="screen">
     <link rel="stylesheet" href="/CurrentQuiz.css" media="screen">
     <link href="https://fonts.googleapis.com/css2?family=Amatic+SC&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Oswald" rel="stylesheet">
 
     <meta name="theme-color" content="#478ac9">
+
+    <meta property="og:type"  content="website" />
+    <meta property="og:url"   th:content="'https://quiz-tournament-app.herokuapp.com/api/quizzes/' + ${quiz.id}" />
+    <meta property="og:title" th:content="${quiz.title}" />
+    <meta property="og:description"   th:content="${quiz.description == null || quiz.description == ''} ? '&nbsp;' : ${quiz.description}" />
+    <!-- TODO after moving imgs to cloud storage  -->
+    <meta property="og:image" content="https://quiz-tournament-app.herokuapp.com/images/quizzes/default_preview.png" />
   </head>
   <body class="c-body">
     <header class="c-header">

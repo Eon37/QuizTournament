@@ -40,7 +40,7 @@ public class QuizImageService {
 
         switch (type) {
             case DEFAULT_QUIZ:
-                sb.append("quizzes/quiz");
+                sb.append("quizzes/defaults/quiz");
                 sb.append(ThreadLocalRandom.current().nextInt(CommonConstants.DEFAULT_QUIZ_IMG_CNT));
                 sb.append(".png");
 
