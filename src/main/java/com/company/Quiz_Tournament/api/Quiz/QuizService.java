@@ -68,12 +68,9 @@ public class QuizService {
 
         quiz.setUser(user);
 
+        //Title and text are required, should not be blank. Description can be blank.
         if (StringUtils.isEmptyOrWhitespace(quiz.getTitle())) {
             quiz.setTitle(persistedQuiz.getTitle());
-        }
-
-        if (StringUtils.isEmptyOrWhitespace(quiz.getDescription())) {
-            quiz.setDescription(persistedQuiz.getDescription());
         }
 
         if (StringUtils.isEmptyOrWhitespace(quiz.getText())) {
