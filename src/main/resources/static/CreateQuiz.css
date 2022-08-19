@@ -14,12 +14,12 @@ input[type='text'] {
   input[type='submit'] {
     margin-top: 80px;
   }
-
+/*
   section {
     min-height: 600px;
   }
 }
-
+*/
 @media only screen and (max-width: 801px) {
   .form-mobile {
     display: flex;
@@ -31,8 +31,9 @@ input[type='text'] {
   ul {
     padding-left: 0px;
   }
-
+/*
   section {
     min-height: 650px;
   }
+  */
 }
