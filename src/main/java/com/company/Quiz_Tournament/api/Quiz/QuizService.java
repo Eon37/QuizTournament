@@ -43,18 +43,21 @@ public class QuizService {
 
         if (quiz.getId() == null) {
             quiz.setUser(user);
-            user.getQuizzes().add(quiz);
 
             quiz.setImage(image.isEmpty()
                     ? quizImageService.save(quizImageService.getRandomDefaultImage(ImageType.DEFAULT_QUIZ))
                     : quizImageService.save(new QuizImage(image.getBytes(), image.getContentType(), ImageType.QUIZ)));
 
-            Collection<String> options = filterOptions(quiz.getOptions());
+            Collection<String> options = prepareOptions(quiz.getOptions());
             quiz.setOptions(options);
 
             quiz.setAnswer(filteredAnswer(quiz.getAnswer(), options.size()));
 
-            return quizRepository.save(quiz);
+            quiz = quizRepository.save(quiz);
+
+            user.getQuizzes().add(quiz);
+
+            return quiz;
         }
 
         Quiz persistedQuiz = getById(quiz.getId());
@@ -81,7 +84,7 @@ public class QuizService {
                 ? persistedQuiz.getImage()
                 : quizImageService.save(new QuizImage(image.getBytes(), image.getContentType(), ImageType.QUIZ)));
 
-        Collection<String> options = filterOptions(quiz.getOptions());
+        Collection<String> options = prepareOptions(quiz.getOptions());
         quiz.setOptions(CollectionUtils.isEmpty(options) ? persistedQuiz.getOptions() : options);
 
         quiz.setAnswer(filteredAnswer(quiz.getAnswer(), options.size()));
@@ -89,8 +92,22 @@ public class QuizService {
         return quizRepository.save(quiz);
     }
 
+    private Collection<String> prepareOptions(Collection<String> options) {
+        Collection<String> prepared = filterOptions(options);
+        validateOptions(prepared);
+
+        return prepared;
+    }
+
+    private void validateOptions(Collection<String> options) {
+        if (options.size() < 2) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There should be more than one unique option");
+        }
+    }
+
     private Collection<String> filterOptions(Collection<String> options) {
         return options.stream()
+                .filter(op -> !StringUtils.isEmptyOrWhitespace(op))
                 .filter(op -> !EmptyQuizConstants.OPTION.equals(op))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
     }
