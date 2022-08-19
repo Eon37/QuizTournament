@@ -39,7 +39,7 @@ public class Quiz {
 
     @ElementCollection
     @NotNull
-    @Size(min = 2)
+    @Size(min = 2, max = CommonConstants.DEFAULT_INT_OPTIONS_SIZE)
     private Collection<String> options = new LinkedHashSet<>(CommonConstants.DEFAULT_INT_OPTIONS_SIZE);
 
     @ElementCollection
@@ -152,7 +152,7 @@ public class Quiz {
     public static Collection<String> addEmptyOptions(Collection<String> initialOptions, int size) {
         Collection<String> options = new ArrayList<>(initialOptions);
 
-        for (int i = 0; i < size; i++) {
+        for (int i = initialOptions.size(); i < size; i++) {
             options.add(EmptyQuizConstants.OPTION);
         }
 
