@@ -41,25 +41,29 @@ public class QuizService {
     public Quiz save(Quiz quiz, MultipartFile image) throws IOException {
         User user = ContextUtils.getCurrentUserOrThrow();
 
-        if (quiz.getId() == null) {
-            quiz.setUser(user);
+        return quiz.getId() == null ? createQuiz(quiz, image, user) : updateQuiz(quiz, image, user);
+    }
 
-            quiz.setImage(image.isEmpty()
-                    ? quizImageService.save(quizImageService.getRandomDefaultImage(ImageType.DEFAULT_QUIZ))
-                    : quizImageService.save(new QuizImage(image.getBytes(), image.getContentType(), ImageType.QUIZ)));
+    private Quiz createQuiz(Quiz quiz, MultipartFile image, User user) throws IOException {
+        quiz.setUser(user);
 
-            Collection<String> options = prepareOptions(quiz.getOptions());
-            quiz.setOptions(options);
+        quiz.setImage(image.isEmpty()
+                ? quizImageService.save(quizImageService.getRandomDefaultImage(ImageType.DEFAULT_QUIZ))
+                : quizImageService.save(new QuizImage(image.getBytes(), image.getContentType(), ImageType.QUIZ)));
 
-            quiz.setAnswer(filteredAnswer(quiz.getAnswer(), options.size()));
+        Collection<String> options = prepareOptions(quiz.getOptions());
+        quiz.setOptions(options);
 
-            quiz = quizRepository.save(quiz);
+        quiz.setAnswer(filteredAnswer(quiz.getAnswer(), options.size()));
 
-            user.getQuizzes().add(quiz);
+        quiz = quizRepository.save(quiz);
 
-            return quiz;
-        }
+        user.getQuizzes().add(quiz);
 
+        return quiz;
+    }
+
+    private Quiz updateQuiz(Quiz quiz, MultipartFile image, User user) throws IOException {
         Quiz persistedQuiz = getById(quiz.getId());
 
         if (!user.getEmail().equals(persistedQuiz.getUser().getEmail())) {
@@ -90,7 +94,10 @@ public class QuizService {
     }
 
     private Collection<String> prepareOptions(Collection<String> options) {
+        //remove default values and duplicates
         Collection<String> prepared = filterOptions(options);
+
+        //validate remaining
         validateOptions(prepared);
 
         return prepared;
