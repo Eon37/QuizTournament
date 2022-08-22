@@ -9,7 +9,6 @@ import com.company.Quiz_Tournament.models.QuizPageModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
@@ -45,7 +44,7 @@ public class QuizController {
     @GetMapping("/api/quizzes/create")
     public ModelAndView getCreateQuizPage() {
         return CreateQuizPageModel.builder()
-                .quiz(Quiz.emptyQuiz())
+                .quiz(Quiz.newEmptyQuiz())
                 .build();
     }
 

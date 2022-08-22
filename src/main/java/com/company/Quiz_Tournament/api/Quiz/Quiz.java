@@ -133,7 +133,7 @@ public class Quiz {
         return answerInterceptor;
     }
 
-    public static Quiz emptyQuiz() {
+    public static Quiz newEmptyQuiz() {
         return new Quiz(
                 EmptyQuizConstants.TITLE,
                 EmptyQuizConstants.DESCRIPTION,
