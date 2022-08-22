@@ -15,14 +15,18 @@ public class QuizTest {
 
     @Test
     void emptyQuizOptionsSize() {
-        assertEquals(Quiz.emptyQuiz().getOptions().size(), CommonConstants.DEFAULT_INT_OPTIONS_SIZE);
+        assertEquals(Quiz.newEmptyQuiz().getOptions().size(), CommonConstants.DEFAULT_INT_OPTIONS_SIZE);
     }
 
     @Test
     void addEmptyOptions() {
+        //Given
         Collection<String> initList = Arrays.asList("1", "2", "3");
+
+        //When
         Collection<String> newList = Quiz.addEmptyOptions(initList, CommonConstants.DEFAULT_INT_OPTIONS_SIZE);
 
+        //Then
         assertEquals(CommonConstants.DEFAULT_INT_OPTIONS_SIZE, newList.size());
         assertTrue(newList.containsAll(initList));
         assertEquals(CommonConstants.DEFAULT_INT_OPTIONS_SIZE - initList.size(),
@@ -31,13 +35,16 @@ public class QuizTest {
 
     @Test
     void addEmptyOptionsWhenAllFilled() {
+        //Given
         Collection<String> initList = IntStream
                 .range(0, CommonConstants.DEFAULT_INT_OPTIONS_SIZE)
                 .mapToObj(String::valueOf)
                 .collect(Collectors.toList());
 
+        //When
         Collection<String> newList = Quiz.addEmptyOptions(initList, CommonConstants.DEFAULT_INT_OPTIONS_SIZE);
 
+        //Then
         assertEquals(CommonConstants.DEFAULT_INT_OPTIONS_SIZE, newList.size());
         assertFalse(newList.contains(EmptyQuizConstants.OPTION));
     }
