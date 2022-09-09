@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -52,6 +53,18 @@ public class Quiz {
     private Collection<Integer> answerInterceptor = new HashSet<>(CommonConstants.DEFAULT_INT_OPTIONS_SIZE);
 
     public Quiz() {}
+
+    private Quiz(Long id, String title, String description, String text, QuizImage image, User user,
+                 Collection<String> options, Collection<Integer> answer) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.text = text;
+        this.image = image;
+        this.user = user;
+        this.options = options;
+        this.answer = answer;
+    }
 
     public void setId(Long id) {
         this.id = id;
@@ -125,42 +138,30 @@ public class Quiz {
         return answerInterceptor;
     }
 
-    public static Quiz createQuiz(String title, String description, String text, User user,
-                                  Collection<String> options, Collection<Integer> answer) {
-        Quiz newQuiz =  new Quiz();
-        newQuiz.title = title;
-        newQuiz.description = description;
-        newQuiz.text = text;
-        newQuiz.user = user;
-        newQuiz.options = options;
-        newQuiz.answer = answer;
-
-        return newQuiz;
-    }
-
-    public static Quiz newEmptyQuiz() {
-        return createQuiz(EmptyQuizConstants.TITLE,
-                EmptyQuizConstants.DESCRIPTION,
-                EmptyQuizConstants.TEXT,
-                ContextUtils.getCurrentUserOrThrow(),
-                addEmptyOptions(Collections.emptyList(), CommonConstants.DEFAULT_INT_OPTIONS_SIZE),
-                Collections.emptyList());
+    public static Quiz newEmptyQuiz(boolean fillEmptyOptions) {
+        return builder()
+                .title(EmptyQuizConstants.TITLE)
+                .description(EmptyQuizConstants.DESCRIPTION)
+                .text(EmptyQuizConstants.TEXT)
+                .image(QuizImage.emptyQuizImage())
+                .user(ContextUtils.getCurrentUserOrThrow())
+                .options(new ArrayList<>(), fillEmptyOptions)
+                .answer(Collections.emptyList())
+                .build();
     }
 
     /**
-     * Adds additional empty options to specified collection in order to be drawn on UI
-     * @param initialOptions initial collection of options
-     * @param size number of options to be added
-     * @return collection of empty options
+     * Adds empty options up to default options size
+     * @return this quiz
      */
-    public static Collection<String> addEmptyOptions(Collection<String> initialOptions, int size) {
-        Collection<String> options = new ArrayList<>(initialOptions);
+    public Quiz addEmptyOptions() {
+        options = new ArrayList<>(options);
 
-        for (int i = initialOptions.size(); i < size; i++) {
+        for (int i = options.size(); i < CommonConstants.DEFAULT_INT_OPTIONS_SIZE; i++) {
             options.add(EmptyQuizConstants.OPTION);
         }
 
-        return options;
+        return this;
     }
 
     @Override
@@ -190,5 +191,87 @@ public class Quiz {
         result = 31 * result + (options != null ? options.hashCode() : 0);
         result = 31 * result + (answer != null ? answer.hashCode() : 0);
         return result;
+    }
+
+    public static QuizBuilder builder() {
+        return new QuizBuilder();
+    }
+
+    public static QuizBuilder builder(@NotNull @Valid Quiz other) {
+        return new QuizBuilder(other);
+    }
+
+    public static class QuizBuilder {
+        private Long id;
+        private String title;
+        private String description;
+        private String text;
+        private QuizImage image = QuizImage.emptyQuizImage();
+        private User user;
+        private Collection<String> options = new LinkedHashSet<>(CommonConstants.DEFAULT_INT_OPTIONS_SIZE);
+        private Collection<Integer> answer = new HashSet<>(CommonConstants.DEFAULT_INT_OPTIONS_SIZE);
+        private boolean isAddEmptyOptions = true;
+
+        private QuizBuilder() {}
+
+        private QuizBuilder(Quiz other) {
+            id = other.getId();
+            title = other.getTitle();
+            description = other.getDescription();
+            text = other.getText();
+            user = ContextUtils.getCurrentUserOrThrow();
+            image = other.getImage();
+            options = other.getOptions();
+            answer = other.getAnswer();
+        }
+
+        public QuizBuilder id(@NotNull Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public QuizBuilder title(@NotBlank String title) {
+            this.title = title;
+            return this;
+        }
+
+        public QuizBuilder description(@NotBlank String description) {
+            this.description = description;
+            return this;
+        }
+
+        public QuizBuilder text(@NotBlank String text) {
+            this.text = text;
+            return this;
+        }
+
+        public QuizBuilder user(@NotNull @Valid User user) {
+            this.user = user;
+            return this;
+        }
+
+        public QuizBuilder image(@NotNull QuizImage image) {
+            this.image = image;
+            return this;
+        }
+
+        public QuizBuilder options(@NotNull Collection<String> options, boolean addEmptyOptions) {
+            this.options = new ArrayList<>(options);
+            this.isAddEmptyOptions = addEmptyOptions;
+            return this;
+        }
+
+        public QuizBuilder answer(@NotNull Collection<Integer> answer) {
+            this.answer = new ArrayList<>(answer);
+            return this;
+        }
+
+        public Quiz build() {
+            Quiz newQuiz = new Quiz(id, title, description, text, image, user, options, answer);
+
+            return isAddEmptyOptions
+                    ? newQuiz.addEmptyOptions()
+                    : newQuiz;
+        }
     }
 }

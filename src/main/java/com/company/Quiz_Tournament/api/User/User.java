@@ -120,13 +120,12 @@ public class User {
 
         User user = (User) o;
 
-        return email.equals(user.email) && password.equals(user.password);
+        return email.equals(user.email);
     }
 
     @Override
     public int hashCode() {
         int result = email.hashCode();
-        result = 31 * result + password.hashCode();
         return result;
     }
 }

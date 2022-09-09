@@ -45,22 +45,28 @@ public class QuizService {
     }
 
     private Quiz createQuiz(Quiz quiz, MultipartFile image, User user) throws IOException {
-        quiz.setUser(user);
-
-        quiz.setImage(image.isEmpty()
-                ? quizImageService.save(quizImageService.getRandomDefaultImage(ImageType.DEFAULT_QUIZ))
-                : quizImageService.save(new QuizImage(image.getBytes(), image.getContentType(), ImageType.QUIZ)));
-
         Collection<String> options = prepareOptions(quiz.getOptions());
-        quiz.setOptions(options);
+        Collection<Integer> answer = filteredAnswer(quiz.getAnswer(), options.size());
+        QuizImage quizImage = image.isEmpty()
+                ? quizImageService.save(quizImageService.getRandomDefaultImage(ImageType.DEFAULT_QUIZ))
+                : quizImageService.save(new QuizImage(image.getBytes(), image.getContentType(), ImageType.QUIZ));
 
-        quiz.setAnswer(filteredAnswer(quiz.getAnswer(), options.size()));
+        Quiz quizToSave = Quiz.builder()
+                .title(quiz.getTitle())
+                .description(quiz.getDescription())
+                .text(quiz.getText())
+                .image(quizImage)
+                .user(user)
+                .options(options, false)
+                .answer(answer)
+                .build();
 
-        quiz = quizRepository.save(quiz);
+        quizToSave = quizRepository.save(quizToSave);
 
-        user.getQuizzes().add(quiz);
+        //Add quiz with new id
+        user.getQuizzes().add(quizToSave);
 
-        return quiz;
+        return quizToSave;
     }
 
     private Quiz updateQuiz(Quiz quiz, MultipartFile image, User user) throws IOException {
@@ -70,27 +76,30 @@ public class QuizService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You have no rights to update this quiz");
         }
 
-        quiz.setUser(user);
-
-        //Title and text are required, should not be blank. Description can be blank.
-        if (StringUtils.isEmptyOrWhitespace(quiz.getTitle())) {
-            quiz.setTitle(persistedQuiz.getTitle());
-        }
-
-        if (StringUtils.isEmptyOrWhitespace(quiz.getText())) {
-            quiz.setText(persistedQuiz.getText());
-        }
-
-        quiz.setImage(image.isEmpty()
+        String title = StringUtils.isEmptyOrWhitespace(quiz.getTitle())
+                ? persistedQuiz.getTitle()
+                : quiz.getTitle();
+        String text = StringUtils.isEmptyOrWhitespace(quiz.getText())
+                ? persistedQuiz.getText()
+                : quiz.getText();
+        QuizImage quizImage = image.isEmpty()
                 ? persistedQuiz.getImage()
-                : quizImageService.save(new QuizImage(image.getBytes(), image.getContentType(), ImageType.QUIZ)));
-
+                : quizImageService.save(new QuizImage(image.getBytes(), image.getContentType(), ImageType.QUIZ));
         Collection<String> options = prepareOptions(quiz.getOptions());
-        quiz.setOptions(CollectionUtils.isEmpty(options) ? persistedQuiz.getOptions() : options);
+        Collection<Integer> answer = filteredAnswer(quiz.getAnswer(), options.size());
 
-        quiz.setAnswer(filteredAnswer(quiz.getAnswer(), options.size()));
+        Quiz quizToSave = Quiz.builder()
+                .id(quiz.getId())
+                .title(title)
+                .description(quiz.getDescription())
+                .text(text)
+                .image(quizImage)
+                .user(user)
+                .options(options, false)
+                .answer(answer)
+                .build();
 
-        return quizRepository.save(quiz);
+        return quizRepository.save(quizToSave);
     }
 
     private Collection<String> prepareOptions(Collection<String> options) {

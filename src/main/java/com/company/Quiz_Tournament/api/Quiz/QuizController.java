@@ -44,17 +44,14 @@ public class QuizController {
     @GetMapping("/api/quizzes/create")
     public ModelAndView getCreateQuizPage() {
         return CreateQuizPageModel.builder()
-                .quiz(Quiz.newEmptyQuiz())
+                .quiz(Quiz.newEmptyQuiz(true))
                 .build();
     }
 
     @PostMapping("/api/quizzes/update")
     public ModelAndView getCreateQuizPageForUpdate(@ModelAttribute("quiz") Quiz quiz) {
-        Collection<String> options = Quiz.addEmptyOptions(quiz.getOptions(), CommonConstants.DEFAULT_INT_OPTIONS_SIZE - quiz.getOptions().size());
-        quiz.setOptions(options);
-
         return CreateQuizPageModel.builder()
-                .quiz(quiz)
+                .quiz(quiz.addEmptyOptions())
                 .build();
     }
 
@@ -62,11 +59,9 @@ public class QuizController {
     public ModelAndView createQuiz(@RequestPart("file") MultipartFile image,
                              @Valid @ModelAttribute(name="emptyQuiz") Quiz newQuiz) throws IOException {
         quizService.save(newQuiz, image);
-        Collection<String> options = Quiz.addEmptyOptions(newQuiz.getOptions(), CommonConstants.DEFAULT_INT_OPTIONS_SIZE - newQuiz.getOptions().size());
-        newQuiz.setOptions(options);
 
         return CreateQuizPageModel.builder()
-                .quiz(newQuiz)
+                .quiz(newQuiz.addEmptyOptions())
                 .build();
     }
 

@@ -7,8 +7,6 @@ import com.company.Quiz_Tournament.api.User.User;
 import com.company.Quiz_Tournament.configs.UserDetails.CustomUserDetails;
 import com.company.Quiz_Tournament.constants.CommonConstants;
 import com.company.Quiz_Tournament.utils.ContextUtils;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,7 +23,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -45,8 +42,7 @@ public class QuizServiceTest {
 
     @BeforeEach
     void beforeEach() {
-        User user = new User(null,null,null,null);
-        user.setQuizzes(new ArrayList<>());
+        User user = User.newEmptyUser();
 
         Authentication auth = new UsernamePasswordAuthenticationToken(
                 new CustomUserDetails(user),
@@ -60,12 +56,7 @@ public class QuizServiceTest {
     @Test
     void exceptionWhenNoOptions() {
         //Given
-        Quiz quiz = Quiz.newEmptyQuiz();
-        quiz.setOptions(Collections.emptyList());
-        QuizImage emptyImage = QuizImage.emptyQuizImage();
-
-        Mockito.when(quizImageService.getRandomDefaultImage(ImageType.DEFAULT_QUIZ)).thenReturn(emptyImage);
-        Mockito.when(quizImageService.save(emptyImage)).thenReturn(emptyImage);
+        Quiz quiz = Quiz.newEmptyQuiz(false);
 
         //When
         ResponseStatusException exception =
@@ -79,11 +70,7 @@ public class QuizServiceTest {
     @Test
     void exceptionWhenNoDistinctOptions() {
         //Given
-        Quiz quiz = Quiz.newEmptyQuiz(); //contains 10 string options of the same value
-        QuizImage emptyImage = QuizImage.emptyQuizImage();
-
-        Mockito.when(quizImageService.getRandomDefaultImage(ImageType.DEFAULT_QUIZ)).thenReturn(emptyImage);
-        Mockito.when(quizImageService.save(emptyImage)).thenReturn(emptyImage);
+        Quiz quiz = Quiz.newEmptyQuiz(true); //contains 10 string options of the same value
 
         //When
         ResponseStatusException exception =
@@ -97,12 +84,9 @@ public class QuizServiceTest {
     @Test
     void exceptionWhenOneUniqueOptions() {
         //Given
-        Quiz quiz = Quiz.newEmptyQuiz();
-        quiz.setOptions(Quiz.addEmptyOptions(Arrays.asList("1", "1", "1"), CommonConstants.DEFAULT_INT_OPTIONS_SIZE));
-        QuizImage emptyImage = QuizImage.emptyQuizImage();
-
-        Mockito.when(quizImageService.getRandomDefaultImage(ImageType.DEFAULT_QUIZ)).thenReturn(emptyImage);
-        Mockito.when(quizImageService.save(emptyImage)).thenReturn(emptyImage);
+        Quiz quiz = Quiz.builder(Quiz.newEmptyQuiz(false))
+                .options(Arrays.asList("1", "1", "1"), true)
+                .build();
 
         //When
         ResponseStatusException exception =
@@ -116,13 +100,14 @@ public class QuizServiceTest {
     @Test
     void noExceptionOptions() throws IOException {
         //Given
-        Quiz quiz = Quiz.newEmptyQuiz();
-        quiz.setOptions(Quiz.addEmptyOptions(Arrays.asList("1", "2", "69"), CommonConstants.DEFAULT_INT_OPTIONS_SIZE));
+        Quiz quiz = Quiz.builder(Quiz.newEmptyQuiz(false))
+                .options(Arrays.asList("1", "2", "69"), true)
+                .build();
         QuizImage emptyImage = QuizImage.emptyQuizImage();
 
         Mockito.when(quizImageService.getRandomDefaultImage(ImageType.DEFAULT_QUIZ)).thenReturn(emptyImage);
         Mockito.when(quizImageService.save(emptyImage)).thenReturn(emptyImage);
-        Mockito.when(quizRepository.save(quiz)).thenReturn(quiz);
+        Mockito.when(quizRepository.save(Mockito.any(Quiz.class))).thenReturn(quiz);
 
         //When
         quizService.save(quiz, mockMultipartFile);
@@ -134,13 +119,14 @@ public class QuizServiceTest {
     @Test
     void noExceptionOptionsWithDuplicates() throws IOException {
         //Given
-        Quiz quiz = Quiz.newEmptyQuiz();
-        quiz.setOptions(Quiz.addEmptyOptions(Arrays.asList("1", "1", "2", "69", "69"), CommonConstants.DEFAULT_INT_OPTIONS_SIZE));
+        Quiz quiz = Quiz.builder(Quiz.newEmptyQuiz(false))
+                .options(Arrays.asList("1", "1", "2", "69", "69"), true)
+                .build();
         QuizImage emptyImage = QuizImage.emptyQuizImage();
 
         Mockito.when(quizImageService.getRandomDefaultImage(ImageType.DEFAULT_QUIZ)).thenReturn(emptyImage);
         Mockito.when(quizImageService.save(emptyImage)).thenReturn(emptyImage);
-        Mockito.when(quizRepository.save(quiz)).thenReturn(quiz);
+        Mockito.when(quizRepository.save(Mockito.any(Quiz.class))).thenReturn(quiz);
 
         //When
         quizService.save(quiz, mockMultipartFile);
