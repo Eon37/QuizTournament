@@ -7,7 +7,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity(name = "Users")
@@ -38,11 +38,11 @@ public class User {
     private String newPassword;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "user")
-    private List<Quiz> quizzes;
+    private List<Quiz> quizzes = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "imageID")
-    private QuizImage image;
+    private QuizImage image = QuizImage.emptyQuizImage();
 
     private User() {}
 
@@ -51,8 +51,6 @@ public class User {
         this.nickname = nickname;
         this.password = password;
         this.newPassword = newPassword;
-        this.quizzes = Collections.emptyList();
-        this.image = QuizImage.emptyQuizImage();
     }
 
     public void setId(Long id) {
@@ -108,20 +106,27 @@ public class User {
     }
 
     public QuizImage getImage() {
-        return image == null ? QuizImage.emptyQuizImage() : image;
+        return image;
     }
 
-    public static User emptyUser() {
+    public static User newEmptyUser() {
         return new User("", "", "", "");
     }
 
     @Override
-    public int hashCode() {
-        return id.hashCode();
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        User user = (User) o;
+
+        return email.equals(user.email) && password.equals(user.password);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        return obj instanceof User && this.id.equals(((User) obj).id);
+    public int hashCode() {
+        int result = email.hashCode();
+        result = 31 * result + password.hashCode();
+        return result;
     }
 }

@@ -3,6 +3,7 @@ package com.company.Quiz_Tournament.api.QuizImage;
 import org.apache.tomcat.util.codec.binary.Base64;
 
 import javax.persistence.*;
+import java.util.Arrays;
 
 @Entity(name = "Quiz_Image")
 public class QuizImage {
@@ -59,5 +60,20 @@ public class QuizImage {
 
     public static QuizImage emptyQuizImage() {
         return new QuizImage();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        QuizImage quizImage = (QuizImage) o;
+
+        return Arrays.equals(data, quizImage.data);
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.hashCode(data);
     }
 }

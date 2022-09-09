@@ -39,7 +39,7 @@ public class UserController {
     @GetMapping(path = "/api/register")
     public ModelAndView getRegisterPage() {
         return RegisterPageModel.builder()
-                .newUser(User.emptyUser())
+                .newUser(User.newEmptyUser())
                 .build();
     }
 

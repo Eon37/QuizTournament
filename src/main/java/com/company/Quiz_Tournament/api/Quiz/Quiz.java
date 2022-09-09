@@ -4,6 +4,7 @@ import com.company.Quiz_Tournament.api.QuizImage.QuizImage;
 import com.company.Quiz_Tournament.api.User.User;
 import com.company.Quiz_Tournament.constants.CommonConstants;
 import com.company.Quiz_Tournament.constants.EmptyQuizConstants;
+import com.company.Quiz_Tournament.utils.ContextUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -51,15 +52,6 @@ public class Quiz {
     private Collection<Integer> answerInterceptor = new HashSet<>(CommonConstants.DEFAULT_INT_OPTIONS_SIZE);
 
     public Quiz() {}
-
-    public Quiz(String title, String description, String text, User user, Collection<String> options, Collection<Integer> answer) {
-        this.title = title;
-        this.description = description;
-        this.text = text;
-        this.user = user;
-        this.options = options;
-        this.answer = answer == null ? new HashSet<>(CommonConstants.DEFAULT_INT_OPTIONS_SIZE) : answer;
-    }
 
     public void setId(Long id) {
         this.id = id;
@@ -133,12 +125,24 @@ public class Quiz {
         return answerInterceptor;
     }
 
+    public static Quiz createQuiz(String title, String description, String text, User user,
+                                  Collection<String> options, Collection<Integer> answer) {
+        Quiz newQuiz =  new Quiz();
+        newQuiz.title = title;
+        newQuiz.description = description;
+        newQuiz.text = text;
+        newQuiz.user = user;
+        newQuiz.options = options;
+        newQuiz.answer = answer;
+
+        return newQuiz;
+    }
+
     public static Quiz newEmptyQuiz() {
-        return new Quiz(
-                EmptyQuizConstants.TITLE,
+        return createQuiz(EmptyQuizConstants.TITLE,
                 EmptyQuizConstants.DESCRIPTION,
                 EmptyQuizConstants.TEXT,
-                null,
+                ContextUtils.getCurrentUserOrThrow(),
                 addEmptyOptions(Collections.emptyList(), CommonConstants.DEFAULT_INT_OPTIONS_SIZE),
                 Collections.emptyList());
     }
@@ -160,12 +164,31 @@ public class Quiz {
     }
 
     @Override
-    public int hashCode() {
-        return id.hashCode();
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Quiz quiz = (Quiz) o;
+
+        return Objects.equals(title, quiz.title)
+                && Objects.equals(description, quiz.description)
+                && Objects.equals(text, quiz.text)
+                && Objects.equals(image, quiz.image)
+                && Objects.equals(user, quiz.user)
+                && Objects.equals(options, quiz.options)
+                && Objects.equals(answer, quiz.answer);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        return obj instanceof Quiz && this.id.equals(((Quiz) obj).id);
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (title != null ? title.hashCode() : 0);
+        result = 31 * result + (description != null ? description.hashCode() : 0);
+        result = 31 * result + (text != null ? text.hashCode() : 0);
+        result = 31 * result + (image != null ? image.hashCode() : 0);
+        result = 31 * result + (user != null ? user.hashCode() : 0);
+        result = 31 * result + (options != null ? options.hashCode() : 0);
+        result = 31 * result + (answer != null ? answer.hashCode() : 0);
+        return result;
     }
 }
