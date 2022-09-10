@@ -1,15 +1,18 @@
 package com.company.Quiz_Tournament.api.Quiz;
 
+import com.company.Quiz_Tournament.api.CompletedQuizzes.CompletedQuizzes;
+import com.company.Quiz_Tournament.api.CompletedQuizzes.CompletedQuizzesService;
+import com.company.Quiz_Tournament.api.FeedBack;
 import com.company.Quiz_Tournament.api.QuizImage.ImageType;
 import com.company.Quiz_Tournament.api.QuizImage.QuizImage;
 import com.company.Quiz_Tournament.api.QuizImage.QuizImageService;
 import com.company.Quiz_Tournament.api.User.User;
 import com.company.Quiz_Tournament.configs.UserDetails.CustomUserDetails;
-import com.company.Quiz_Tournament.constants.CommonConstants;
 import com.company.Quiz_Tournament.utils.ContextUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -25,6 +28,8 @@ import org.springframework.web.server.ResponseStatusException;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -37,6 +42,8 @@ public class QuizServiceTest {
     private QuizRepository quizRepository;
     @Mock
     private QuizImageService quizImageService;
+    @Mock
+    private CompletedQuizzesService completedQuizzesService;
 
     private final MockMultipartFile mockMultipartFile = new MockMultipartFile("file", new byte[]{});
 
@@ -49,7 +56,7 @@ public class QuizServiceTest {
                 null,
                 Collections.emptyList());
         SecurityContext securityContext = Mockito.mock(SecurityContext.class);
-        Mockito.when(securityContext.getAuthentication()).thenReturn(auth);
+        Mockito.lenient().when(securityContext.getAuthentication()).thenReturn(auth);
         SecurityContextHolder.setContext(securityContext);
     }
 
@@ -64,7 +71,7 @@ public class QuizServiceTest {
 
         //Then
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
-        assertEquals(exception.getReason(), "There should be more than one unique option");
+        assertEquals("There should be more than one unique option", exception.getReason());
     }
 
     @Test
@@ -78,7 +85,7 @@ public class QuizServiceTest {
 
         //Then
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
-        assertEquals(exception.getReason(), "There should be more than one unique option");
+        assertEquals("There should be more than one unique option", exception.getReason());
     }
 
     @Test
@@ -94,26 +101,30 @@ public class QuizServiceTest {
 
         //Then
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
-        assertEquals(exception.getReason(), "There should be more than one unique option");
+        assertEquals("There should be more than one unique option", exception.getReason());
     }
 
     @Test
     void noExceptionOptions() throws IOException {
         //Given
+        List<String> initialOptions = Arrays.asList("1", "2", "69");
         Quiz quiz = Quiz.builder(Quiz.newEmptyQuiz(false))
-                .options(Arrays.asList("1", "2", "69"), true)
+                .options(initialOptions, true)
                 .build();
         QuizImage emptyImage = QuizImage.emptyQuizImage();
 
         Mockito.when(quizImageService.getRandomDefaultImage(ImageType.DEFAULT_QUIZ)).thenReturn(emptyImage);
         Mockito.when(quizImageService.save(emptyImage)).thenReturn(emptyImage);
-        Mockito.when(quizRepository.save(Mockito.any(Quiz.class))).thenReturn(quiz);
+
+        ArgumentCaptor<Quiz> savedQuiz = ArgumentCaptor.forClass(Quiz.class);
+        Mockito.when(quizRepository.save(savedQuiz.capture())).thenReturn(quiz);
 
         //When
         quizService.save(quiz, mockMultipartFile);
 
         //Then
         assertEquals(1, ContextUtils.getCurrentUserOrThrow().getQuizzes().size());
+        assertEquals(initialOptions, savedQuiz.getValue().getOptions());
     }
 
     @Test
@@ -126,12 +137,214 @@ public class QuizServiceTest {
 
         Mockito.when(quizImageService.getRandomDefaultImage(ImageType.DEFAULT_QUIZ)).thenReturn(emptyImage);
         Mockito.when(quizImageService.save(emptyImage)).thenReturn(emptyImage);
-        Mockito.when(quizRepository.save(Mockito.any(Quiz.class))).thenReturn(quiz);
+
+        ArgumentCaptor<Quiz> savedQuiz = ArgumentCaptor.forClass(Quiz.class);
+        Mockito.when(quizRepository.save(savedQuiz.capture())).thenReturn(quiz);
 
         //When
         quizService.save(quiz, mockMultipartFile);
 
         //Then
         assertEquals(1, ContextUtils.getCurrentUserOrThrow().getQuizzes().size());
+        assertEquals(Arrays.asList("1", "2", "69"), savedQuiz.getValue().getOptions());
+    }
+
+    @Test
+    void filterAnswerBelowOptionsSize() throws IOException {
+        Quiz quiz = Quiz.builder(Quiz.newEmptyQuiz(false))
+                .options(Arrays.asList("1", "2", "69"), true)
+                .answer(Arrays.asList(1, 2))
+                .build();
+        QuizImage emptyImage = QuizImage.emptyQuizImage();
+
+        Mockito.when(quizImageService.getRandomDefaultImage(ImageType.DEFAULT_QUIZ)).thenReturn(emptyImage);
+        Mockito.when(quizImageService.save(emptyImage)).thenReturn(emptyImage);
+
+        ArgumentCaptor<Quiz> savedQuiz = ArgumentCaptor.forClass(Quiz.class);
+        Mockito.when(quizRepository.save(savedQuiz.capture())).thenReturn(quiz);
+
+        //When
+        quizService.save(quiz, mockMultipartFile);
+
+        //Then
+        assertEquals(1, ContextUtils.getCurrentUserOrThrow().getQuizzes().size());
+        assertEquals(Arrays.asList(1, 2), savedQuiz.getValue().getAnswer());
+    }
+
+    @Test
+    void filterAnswerAboveOptionsSize() throws IOException {
+        Quiz quiz = Quiz.builder(Quiz.newEmptyQuiz(false))
+                .options(Arrays.asList("1", "2", "69"), true)
+                .answer(Arrays.asList(1, 2, 3))
+                .build();
+        QuizImage emptyImage = QuizImage.emptyQuizImage();
+
+        Mockito.when(quizImageService.getRandomDefaultImage(ImageType.DEFAULT_QUIZ)).thenReturn(emptyImage);
+        Mockito.when(quizImageService.save(emptyImage)).thenReturn(emptyImage);
+
+        ArgumentCaptor<Quiz> savedQuiz = ArgumentCaptor.forClass(Quiz.class);
+        Mockito.when(quizRepository.save(savedQuiz.capture())).thenReturn(quiz);
+
+        //When
+        quizService.save(quiz, mockMultipartFile);
+
+        //Then
+        assertEquals(1, ContextUtils.getCurrentUserOrThrow().getQuizzes().size());
+        assertEquals(Arrays.asList(1, 2), savedQuiz.getValue().getAnswer());
+    }
+
+    @Test
+    void filterAnswerWhenDuplicates() throws IOException {
+        Quiz quiz = Quiz.builder(Quiz.newEmptyQuiz(false))
+                .options(Arrays.asList("1", "1", "2", "2", "69"), true)
+                .answer(Arrays.asList(1, 2, 3))
+                .build();
+        QuizImage emptyImage = QuizImage.emptyQuizImage();
+
+        Mockito.when(quizImageService.getRandomDefaultImage(ImageType.DEFAULT_QUIZ)).thenReturn(emptyImage);
+        Mockito.when(quizImageService.save(emptyImage)).thenReturn(emptyImage);
+
+        ArgumentCaptor<Quiz> savedQuiz = ArgumentCaptor.forClass(Quiz.class);
+        Mockito.when(quizRepository.save(savedQuiz.capture())).thenReturn(quiz);
+
+        //When
+        quizService.save(quiz, mockMultipartFile);
+
+        //Then
+        assertEquals(1, ContextUtils.getCurrentUserOrThrow().getQuizzes().size());
+        assertEquals(Arrays.asList(1, 2), savedQuiz.getValue().getAnswer());
+    }
+
+    @Test
+    void solveQuizIncorrectAnswer() {
+        //Given
+        Quiz quiz = Quiz.builder()
+                .options(Arrays.asList("1", "2", "69"), false)
+                .answer(Arrays.asList(1, 2))
+                .build();
+        Quiz incorrectAnswer = Quiz.builder().build();
+        incorrectAnswer.setAnswerInterceptor(Arrays.asList(0));
+
+        Mockito.when(quizRepository.findById(0L)).thenReturn(Optional.of(quiz));
+
+        //When
+        FeedBack fb = quizService.solve(incorrectAnswer, 0L);
+
+        //Then
+        assertFalse(fb.isSuccess());
+    }
+
+    @Test
+    void solveQuizQuizNotFoundException() {
+        //Given
+        Quiz answer = Quiz.builder().build();
+        answer.setAnswerInterceptor(Arrays.asList(0, 1));
+
+        Mockito.when(quizRepository.findById(0L)).thenReturn(Optional.empty());
+
+        //When
+        ResponseStatusException exception =
+                assertThrows(ResponseStatusException.class, () -> quizService.solve(answer, 0L));
+
+        //Then
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+        assertEquals(exception.getReason(), "Quiz not found");
+    }
+
+    @Test
+    void solveQuizCorrectAnswer() {
+        //Given
+        Quiz quiz = Quiz.builder()
+                .options(Arrays.asList("1", "2", "69"), false)
+                .answer(Arrays.asList(1, 2))
+                .build();
+        Quiz answer = Quiz.builder().build();
+        answer.setAnswerInterceptor(Arrays.asList(1, 2));
+
+        Mockito.when(quizRepository.findById(0L)).thenReturn(Optional.of(quiz));
+
+        //When
+        FeedBack fb = quizService.solve(answer, 0L);
+
+        //Then
+        assertTrue(fb.isSuccess());
+    }
+
+    @Test
+    void solveQuizCorrectAnswerAlreadySolved() {
+        //Given
+        Quiz quiz = Quiz.builder()
+                .options(Arrays.asList("1", "2", "69"), false)
+                .answer(Arrays.asList(1, 2))
+                .build();
+        Quiz answer = Quiz.builder().build();
+        answer.setAnswerInterceptor(Arrays.asList(1, 2));
+
+        Mockito.when(quizRepository.findById(0L)).thenReturn(Optional.of(quiz));
+        Mockito.when(completedQuizzesService.isAlreadySolved(quiz, ContextUtils.getCurrentUserOrThrow())).thenReturn(true);
+
+        //When
+        FeedBack fb = quizService.solve(answer, 0L);
+
+        //Then
+        assertTrue(fb.isSuccess());
+    }
+
+    @Test
+    void solveQuizCorrectAnswerSaveToCompletedQuizzes() {
+        //Given
+        Quiz quiz = Quiz.builder()
+                .options(Arrays.asList("1", "2", "69"), false)
+                .answer(Arrays.asList(1, 2))
+                .build();
+        Quiz answer = Quiz.builder().build();
+        answer.setAnswerInterceptor(Arrays.asList(1, 2));
+
+        Mockito.when(quizRepository.findById(0L)).thenReturn(Optional.of(quiz));
+        Mockito.when(completedQuizzesService.isAlreadySolved(quiz, ContextUtils.getCurrentUserOrThrow())).thenReturn(false);
+        Mockito.doNothing().when(completedQuizzesService).save(Mockito.any(CompletedQuizzes.class));
+
+        //When
+        FeedBack fb = quizService.solve(answer, 0L);
+
+        //Then
+        assertTrue(fb.isSuccess());
+    }
+
+    @Test
+    void deleteForbiddenException() {
+        //Given
+        User quizUser = User.newEmptyUser();
+        quizUser.setEmail("nagibator3000@gmail.com");
+
+        Quiz quiz = Quiz.builder()
+                .user(quizUser)
+                .build();
+
+        Mockito.when(quizRepository.findById(0L)).thenReturn(Optional.of(quiz));
+
+        //When
+        ResponseStatusException exception =
+                assertThrows(ResponseStatusException.class, () -> quizService.delete(0L));
+
+        //Then
+        assertEquals(HttpStatus.FORBIDDEN, exception.getStatus());
+        assertEquals("You have no rights to delete this quiz", exception.getReason());
+    }
+
+    @Test
+    void deleteNoException() {
+        //Given
+        Quiz quiz = Quiz.builder()
+                .user(ContextUtils.getCurrentUserOrThrow())
+                .build();
+
+        Mockito.when(quizRepository.findById(0L)).thenReturn(Optional.of(quiz));
+        Mockito.doNothing().when(quizRepository).delete(quiz);
+
+        //When
+        quizService.delete(0L);
+
+        //Then no exception thrown
     }
 }

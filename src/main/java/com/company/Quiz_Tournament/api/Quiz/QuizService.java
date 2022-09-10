@@ -170,10 +170,6 @@ public class QuizService {
     public void delete(Long id) {
         Quiz quiz = getById(id);
 
-        if (quiz == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Quiz not found");
-        }
-
         String currentUserEmail = ContextUtils.getCurrentUserOrThrow().getEmail();
         if (!currentUserEmail.equals(quiz.getUser().getEmail())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You have no rights to delete this quiz");
