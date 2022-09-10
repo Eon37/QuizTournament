@@ -22,8 +22,10 @@ import org.apache.commons.collections4.CollectionUtils;
 
 import java.io.IOException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -45,8 +47,8 @@ public class QuizService {
     }
 
     private Quiz createQuiz(Quiz quiz, MultipartFile image, User user) throws IOException {
-        Collection<String> options = prepareOptions(quiz.getOptions());
-        Collection<Integer> answer = filteredAnswer(quiz.getAnswer(), options.size());
+        List<String> options = prepareOptions(quiz.getOptions());
+        List<Integer> answer = filteredAnswer(quiz.getAnswer(), options.size());
         QuizImage quizImage = image.isEmpty()
                 ? quizImageService.save(quizImageService.getRandomDefaultImage(ImageType.DEFAULT_QUIZ))
                 : quizImageService.save(new QuizImage(image.getBytes(), image.getContentType(), ImageType.QUIZ));
@@ -85,8 +87,8 @@ public class QuizService {
         QuizImage quizImage = image.isEmpty()
                 ? persistedQuiz.getImage()
                 : quizImageService.save(new QuizImage(image.getBytes(), image.getContentType(), ImageType.QUIZ));
-        Collection<String> options = prepareOptions(quiz.getOptions());
-        Collection<Integer> answer = filteredAnswer(quiz.getAnswer(), options.size());
+        List<String> options = prepareOptions(quiz.getOptions());
+        List<Integer> answer = filteredAnswer(quiz.getAnswer(), options.size());
 
         Quiz quizToSave = Quiz.builder()
                 .id(quiz.getId())
@@ -102,9 +104,9 @@ public class QuizService {
         return quizRepository.save(quizToSave);
     }
 
-    private Collection<String> prepareOptions(Collection<String> options) {
+    private List<String> prepareOptions(List<String> options) {
         //remove default values and duplicates
-        Collection<String> prepared = filterOptions(options);
+        List<String> prepared = filterOptions(options);
 
         //validate remaining
         validateOptions(prepared);
@@ -112,20 +114,21 @@ public class QuizService {
         return prepared;
     }
 
-    private void validateOptions(Collection<String> options) {
+    private void validateOptions(List<String> options) {
         if (options.size() < 2) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There should be more than one unique option");
         }
     }
 
-    private Collection<String> filterOptions(Collection<String> options) {
+    private List<String> filterOptions(List<String> options) {
         return options.stream()
                 .filter(op -> !StringUtils.isEmptyOrWhitespace(op))
                 .filter(op -> !EmptyQuizConstants.OPTION.equals(op))
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+                .distinct()
+                .collect(Collectors.toList());
     }
 
-    private Collection<Integer> filteredAnswer(Collection<Integer> answer, int optionsSize) {
+    private List<Integer> filteredAnswer(List<Integer> answer, int optionsSize) {
         answer.removeIf(a -> a >= optionsSize);
         return answer;
     }

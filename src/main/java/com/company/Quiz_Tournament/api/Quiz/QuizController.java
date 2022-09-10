@@ -58,10 +58,10 @@ public class QuizController {
     @PostMapping(path = "/api/quizzes")
     public ModelAndView createQuiz(@RequestPart("file") MultipartFile image,
                              @Valid @ModelAttribute(name="emptyQuiz") Quiz newQuiz) throws IOException {
-        quizService.save(newQuiz, image);
+        Quiz saved = quizService.save(newQuiz, image);
 
         return CreateQuizPageModel.builder()
-                .quiz(newQuiz.addEmptyOptions())
+                .quiz(saved.addEmptyOptions())
                 .build();
     }
 

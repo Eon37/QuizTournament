@@ -42,11 +42,11 @@ public class Quiz {
     @ElementCollection
     @NotNull
     @Size(min = 2, max = CommonConstants.DEFAULT_INT_OPTIONS_SIZE)
-    private Collection<String> options = new LinkedHashSet<>(CommonConstants.DEFAULT_INT_OPTIONS_SIZE);
+    private List<String> options = new ArrayList<>(CommonConstants.DEFAULT_INT_OPTIONS_SIZE);
 
     @ElementCollection
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private Collection<Integer> answer = new HashSet<>(CommonConstants.DEFAULT_INT_OPTIONS_SIZE);
+    private List<Integer> answer = new ArrayList<>(CommonConstants.DEFAULT_INT_OPTIONS_SIZE);
 
     @JsonIgnore
     @Transient
@@ -55,7 +55,7 @@ public class Quiz {
     public Quiz() {}
 
     private Quiz(Long id, String title, String description, String text, QuizImage image, User user,
-                 Collection<String> options, Collection<Integer> answer) {
+                 List<String> options, List<Integer> answer) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -90,12 +90,12 @@ public class Quiz {
         this.image = image;
     }
 
-    public void setOptions(Collection<String> options) {
+    public void setOptions(List<String> options) {
         this.options = options;
     }
 
-    public void setAnswer(Collection<Integer> answer) {
-        this.answer = answer == null ? new HashSet<>(CommonConstants.DEFAULT_INT_OPTIONS_SIZE) : answer;
+    public void setAnswer(List<Integer> answer) {
+        this.answer = answer == null ? new ArrayList<>(CommonConstants.DEFAULT_INT_OPTIONS_SIZE) : answer;
     }
 
     public void setAnswerInterceptor(Collection<Integer> answerInterceptor) {
@@ -126,11 +126,11 @@ public class Quiz {
         return image;
     }
 
-    public Collection<String> getOptions() {
+    public List<String> getOptions() {
         return options;
     }
 
-    public Collection<Integer> getAnswer() {
+    public List<Integer> getAnswer() {
         return answer;
     }
 
@@ -155,8 +155,6 @@ public class Quiz {
      * @return this quiz
      */
     public Quiz addEmptyOptions() {
-        options = new ArrayList<>(options);
-
         for (int i = options.size(); i < CommonConstants.DEFAULT_INT_OPTIONS_SIZE; i++) {
             options.add(EmptyQuizConstants.OPTION);
         }
@@ -208,8 +206,8 @@ public class Quiz {
         private String text;
         private QuizImage image = QuizImage.emptyQuizImage();
         private User user;
-        private Collection<String> options = new LinkedHashSet<>(CommonConstants.DEFAULT_INT_OPTIONS_SIZE);
-        private Collection<Integer> answer = new HashSet<>(CommonConstants.DEFAULT_INT_OPTIONS_SIZE);
+        private List<String> options = new ArrayList<>(CommonConstants.DEFAULT_INT_OPTIONS_SIZE);
+        private List<Integer> answer = new ArrayList<>(CommonConstants.DEFAULT_INT_OPTIONS_SIZE);
         private boolean isAddEmptyOptions = true;
 
         private QuizBuilder() {}
@@ -255,13 +253,13 @@ public class Quiz {
             return this;
         }
 
-        public QuizBuilder options(@NotNull Collection<String> options, boolean addEmptyOptions) {
+        public QuizBuilder options(@NotNull List<String> options, boolean addEmptyOptions) {
             this.options = new ArrayList<>(options);
             this.isAddEmptyOptions = addEmptyOptions;
             return this;
         }
 
-        public QuizBuilder answer(@NotNull Collection<Integer> answer) {
+        public QuizBuilder answer(@NotNull List<Integer> answer) {
             this.answer = new ArrayList<>(answer);
             return this;
         }

@@ -12,10 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -44,7 +41,7 @@ public class QuizTest {
     @Test
     void addEmptyOptions() {
         //Given
-        Collection<String> initList = new ArrayList<>(Arrays.asList("1", "2", "3"));
+        List<String> initList = new ArrayList<>(Arrays.asList("1", "2", "3"));
 
         //When
         Quiz quiz = Quiz.builder(Quiz.newEmptyQuiz(false))
@@ -61,8 +58,7 @@ public class QuizTest {
     @Test
     void addEmptyOptionsWhenAllFilled() {
         //Given
-        Collection<String> initList = IntStream
-                .range(0, CommonConstants.DEFAULT_INT_OPTIONS_SIZE)
+        List<String> initList = IntStream.range(0, CommonConstants.DEFAULT_INT_OPTIONS_SIZE)
                 .mapToObj(String::valueOf)
                 .collect(Collectors.toList());
 
