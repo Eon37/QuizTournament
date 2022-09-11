@@ -52,9 +52,9 @@ public class Quiz {
     @Transient
     private Collection<Integer> answerInterceptor = new HashSet<>(CommonConstants.DEFAULT_INT_OPTIONS_SIZE);
 
-    public Quiz() {}
+    private Quiz() {}
 
-    private Quiz(Long id, String title, String description, String text, QuizImage image, User user,
+    public Quiz(Long id, String title, String description, String text, QuizImage image, User user,
                  List<String> options, List<Integer> answer) {
         this.id = id;
         this.title = title;
@@ -64,38 +64,6 @@ public class Quiz {
         this.user = user;
         this.options = options;
         this.answer = answer;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public void setText(String text) {
-        this.text = text;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public void setImage(QuizImage image) {
-        this.image = image;
-    }
-
-    public void setOptions(List<String> options) {
-        this.options = options;
-    }
-
-    public void setAnswer(List<Integer> answer) {
-        this.answer = answer == null ? new ArrayList<>(CommonConstants.DEFAULT_INT_OPTIONS_SIZE) : answer;
     }
 
     public void setAnswerInterceptor(Collection<Integer> answerInterceptor) {
