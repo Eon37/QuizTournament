@@ -1,5 +1,6 @@
 package com.company.Quiz_Tournament.api.Quiz;
 
+import com.company.Quiz_Tournament.api.AnswerInterceptor;
 import com.company.Quiz_Tournament.api.CompletedQuizzes.CompletedQuizzes;
 import com.company.Quiz_Tournament.api.CompletedQuizzes.CompletedQuizzesService;
 import com.company.Quiz_Tournament.api.FeedBack;
@@ -222,33 +223,13 @@ public class QuizServiceTest {
                 .options(Arrays.asList("1", "2", "69"), false)
                 .answer(Arrays.asList(1, 2))
                 .build();
-        Quiz incorrectAnswer = Quiz.builder().build();
-        incorrectAnswer.setAnswerInterceptor(Arrays.asList(0));
-
-        Mockito.when(quizRepository.findById(0L)).thenReturn(Optional.of(quiz));
+        AnswerInterceptor incorrectAnswer = new AnswerInterceptor(Arrays.asList(0));
 
         //When
-        FeedBack fb = quizService.solve(incorrectAnswer, 0L);
+        FeedBack fb = quizService.solve(quiz, incorrectAnswer);
 
         //Then
         assertFalse(fb.isSuccess());
-    }
-
-    @Test
-    void solveQuizQuizNotFoundException() {
-        //Given
-        Quiz answer = Quiz.builder().build();
-        answer.setAnswerInterceptor(Arrays.asList(0, 1));
-
-        Mockito.when(quizRepository.findById(0L)).thenReturn(Optional.empty());
-
-        //When
-        ResponseStatusException exception =
-                assertThrows(ResponseStatusException.class, () -> quizService.solve(answer, 0L));
-
-        //Then
-        assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
-        assertEquals(exception.getReason(), "Quiz not found");
     }
 
     @Test
@@ -258,13 +239,10 @@ public class QuizServiceTest {
                 .options(Arrays.asList("1", "2", "69"), false)
                 .answer(Arrays.asList(1, 2))
                 .build();
-        Quiz answer = Quiz.builder().build();
-        answer.setAnswerInterceptor(Arrays.asList(1, 2));
-
-        Mockito.when(quizRepository.findById(0L)).thenReturn(Optional.of(quiz));
+        AnswerInterceptor answer = new AnswerInterceptor(Arrays.asList(1, 2));
 
         //When
-        FeedBack fb = quizService.solve(answer, 0L);
+        FeedBack fb = quizService.solve(quiz, answer);
 
         //Then
         assertTrue(fb.isSuccess());
@@ -277,14 +255,12 @@ public class QuizServiceTest {
                 .options(Arrays.asList("1", "2", "69"), false)
                 .answer(Arrays.asList(1, 2))
                 .build();
-        Quiz answer = Quiz.builder().build();
-        answer.setAnswerInterceptor(Arrays.asList(1, 2));
+        AnswerInterceptor answer = new AnswerInterceptor(Arrays.asList(1, 2));
 
-        Mockito.when(quizRepository.findById(0L)).thenReturn(Optional.of(quiz));
         Mockito.when(completedQuizzesService.isAlreadySolved(quiz, ContextUtils.getCurrentUserOrThrow())).thenReturn(true);
 
         //When
-        FeedBack fb = quizService.solve(answer, 0L);
+        FeedBack fb = quizService.solve(quiz, answer);
 
         //Then
         assertTrue(fb.isSuccess());
@@ -297,15 +273,13 @@ public class QuizServiceTest {
                 .options(Arrays.asList("1", "2", "69"), false)
                 .answer(Arrays.asList(1, 2))
                 .build();
-        Quiz answer = Quiz.builder().build();
-        answer.setAnswerInterceptor(Arrays.asList(1, 2));
+        AnswerInterceptor answer = new AnswerInterceptor(Arrays.asList(1, 2));
 
-        Mockito.when(quizRepository.findById(0L)).thenReturn(Optional.of(quiz));
         Mockito.when(completedQuizzesService.isAlreadySolved(quiz, ContextUtils.getCurrentUserOrThrow())).thenReturn(false);
         Mockito.doNothing().when(completedQuizzesService).save(Mockito.any(CompletedQuizzes.class));
 
         //When
-        FeedBack fb = quizService.solve(answer, 0L);
+        FeedBack fb = quizService.solve(quiz, answer);
 
         //Then
         assertTrue(fb.isSuccess());

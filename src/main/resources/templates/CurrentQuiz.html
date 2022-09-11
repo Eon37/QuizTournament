@@ -100,7 +100,11 @@
             <form style="margin-top: 10px;" action="#" th:action="@{/api/quizzes/{id}/solve(id=${quiz.id})}" th:object="${quiz}" method="post">
                 <ul style="padding-left: 0px;">
                     <li th:each="option, state : ${quiz.options}">
-                        <input type="checkbox" th:field="*{answerInterceptor}" th:value="${state.index}">
+
+                        <div th:object="${answerInterceptor}" >
+                          <input type="checkbox" th:field="*{answer}" th:value="${state.index}">
+                        </div>
+
                         <label th:for="${#ids.next('options')}" th:text="${option}"></label>
                     </li>
                 </ul>

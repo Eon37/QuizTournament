@@ -1,5 +1,6 @@
 package com.company.Quiz_Tournament.api.Quiz;
 
+import com.company.Quiz_Tournament.api.AnswerInterceptor;
 import com.company.Quiz_Tournament.api.CompletedQuizzes.CompletedQuizzes;
 import com.company.Quiz_Tournament.api.CompletedQuizzes.CompletedQuizzesService;
 import com.company.Quiz_Tournament.api.FeedBack;
@@ -22,9 +23,6 @@ import org.apache.commons.collections4.CollectionUtils;
 
 import java.io.IOException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -133,10 +131,8 @@ public class QuizService {
         return answer;
     }
 
-    public FeedBack solve(Quiz answer, Long id) {
-        Quiz quiz = getById(id);
-
-        if (!CollectionUtils.isEqualCollection(answer.getAnswerInterceptor(), quiz.getAnswer())) {
+    public FeedBack solve(Quiz quiz, AnswerInterceptor answer) {
+        if (!CollectionUtils.isEqualCollection(answer.getAnswer(), quiz.getAnswer())) {
             return new FeedBack(false);
         }
 

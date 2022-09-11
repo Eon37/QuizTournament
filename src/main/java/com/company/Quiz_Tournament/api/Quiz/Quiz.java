@@ -5,7 +5,6 @@ import com.company.Quiz_Tournament.api.User.User;
 import com.company.Quiz_Tournament.constants.CommonConstants;
 import com.company.Quiz_Tournament.constants.EmptyQuizConstants;
 import com.company.Quiz_Tournament.utils.ContextUtils;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
@@ -48,10 +47,6 @@ public class Quiz {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<Integer> answer = new ArrayList<>(CommonConstants.DEFAULT_INT_OPTIONS_SIZE);
 
-    @JsonIgnore
-    @Transient
-    private Collection<Integer> answerInterceptor = new HashSet<>(CommonConstants.DEFAULT_INT_OPTIONS_SIZE);
-
     private Quiz() {}
 
     public Quiz(Long id, String title, String description, String text, QuizImage image, User user,
@@ -64,10 +59,6 @@ public class Quiz {
         this.user = user;
         this.options = options;
         this.answer = answer;
-    }
-
-    public void setAnswerInterceptor(Collection<Integer> answerInterceptor) {
-        this.answerInterceptor = answerInterceptor;
     }
 
     public Long getId() {
@@ -100,10 +91,6 @@ public class Quiz {
 
     public List<Integer> getAnswer() {
         return answer;
-    }
-
-    public Collection<Integer> getAnswerInterceptor() {
-        return answerInterceptor;
     }
 
     public static Quiz newEmptyQuiz(boolean fillEmptyOptions) {

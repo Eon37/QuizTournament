@@ -1,5 +1,6 @@
 package com.company.Quiz_Tournament.api.Quiz;
 
+import com.company.Quiz_Tournament.api.AnswerInterceptor;
 import com.company.Quiz_Tournament.api.CompletedQuizzes.CompletedQuizzes;
 import com.company.Quiz_Tournament.api.QuizComments.QuizCommentService;
 import com.company.Quiz_Tournament.constants.CommonConstants;
@@ -15,7 +16,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
 import java.io.IOException;
-import java.util.Collection;
 
 @Controller
 public class QuizController {
@@ -30,13 +30,13 @@ public class QuizController {
     }
 
     @PostMapping(path = "/api/quizzes/{id}/solve")
-    public ModelAndView answerQuiz(@ModelAttribute(name = "quiz") Quiz quiz, @PathVariable Long id) {
+    public ModelAndView answerQuiz(@ModelAttribute(name = "answerInterceptor") AnswerInterceptor answer, @PathVariable Long id) {
         Quiz fullQuiz = quizService.getById(id);
-        fullQuiz.setAnswerInterceptor(quiz.getAnswerInterceptor());
 
         return QuizPageModel.builder()
                 .currentQuiz(fullQuiz)
-                .feedback(quizService.solve(quiz, id))
+                .feedback(quizService.solve(fullQuiz, answer))
+                .answerInterceptor(answer)
                 .commentsCount(quizCommentService.countById(fullQuiz))
                 .build();
     }
@@ -72,6 +72,7 @@ public class QuizController {
         return QuizPageModel.builder()
                 .currentQuiz(quiz)
                 .feedback(null)
+                .answerInterceptor(new AnswerInterceptor())
                 .commentsCount(quizCommentService.countById(quiz))
                 .build();
     }
