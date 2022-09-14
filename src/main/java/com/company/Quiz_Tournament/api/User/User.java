@@ -34,7 +34,7 @@ public class User {
      * Password to set
      */
     @Transient
-    @Size(min = 1) //todo change
+//    @Size(min = 1) //todo change
     private String newPassword;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "user")

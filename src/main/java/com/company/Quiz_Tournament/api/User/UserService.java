@@ -36,44 +36,47 @@ public class UserService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User with such an amazing email already exists");
         }
 
-        return save(user, image, false);
-    }
-
-    public User save(User user, MultipartFile image, boolean isRegistered) throws IOException {
-        if (!isRegistered) {
-            user.setPassword(passwordEncoder.encode(user.getNewPassword())); //todo try newPass in @RequestPart
-
-            user.setImage(image.isEmpty()
-                    ? quizImageService.save(quizImageService.getRandomDefaultImage(ImageType.DEFAULT_USER))
-                    : quizImageService.save(new QuizImage(image.getBytes(), image.getContentType(), ImageType.USER)));
-
-            return userRepository.save(user);
-        }
-
-        User persistedUser = ContextUtils.getCurrentUserOrThrow();
-        user.setEmail(StringUtils.isEmptyOrWhitespace(user.getEmail())
-                ? persistedUser.getEmail()
-                : user.getEmail());
-
-        user.setPassword(StringUtils.isEmptyOrWhitespace(user.getNewPassword())
-                ? persistedUser.getPassword()
-                : passwordEncoder.encode(user.getNewPassword()));
-
-        user.setNickname(StringUtils.isEmptyOrWhitespace(user.getNickname())
-                ? persistedUser.getNickname()
-                : user.getNickname());
+        user.setPassword(passwordEncoder.encode(user.getNewPassword())); //todo try newPass in @RequestPart
 
         user.setImage(image.isEmpty()
-                ? persistedUser.getImage()
+                ? quizImageService.save(quizImageService.getRandomDefaultImage(ImageType.DEFAULT_USER))
                 : quizImageService.save(new QuizImage(image.getBytes(), image.getContentType(), ImageType.USER)));
 
-        user.setQuizzes(persistedUser.getQuizzes());
-        user.setId(persistedUser.getId());
+        return userRepository.save(user);
+    }
 
-        userRepository.save(user);
-        updateSpringSecurityContext(user);
+    public User update(User user, MultipartFile image) throws IOException {
+        User userToUpdate = ContextUtils.getCurrentUserOrThrow();
 
-        return user;
+        if (checkPasswordUpdate(user, userToUpdate)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong email or password");
+        }
+
+        userToUpdate.setEmail(StringUtils.isEmptyOrWhitespace(user.getEmail())
+                ? userToUpdate.getEmail()
+                : user.getEmail());
+
+        userToUpdate.setPassword(StringUtils.isEmptyOrWhitespace(user.getNewPassword())
+                ? userToUpdate.getPassword()
+                : passwordEncoder.encode(user.getNewPassword()));
+
+        userToUpdate.setNickname(StringUtils.isEmptyOrWhitespace(user.getNickname())
+                ? userToUpdate.getNickname()
+                : user.getNickname());
+
+        userToUpdate.setImage(image.isEmpty()
+                ? userToUpdate.getImage()
+                : quizImageService.save(new QuizImage(image.getBytes(), image.getContentType(), ImageType.USER)));
+
+        userToUpdate = userRepository.save(userToUpdate);
+        updateSpringSecurityContext(userToUpdate);
+
+        return userToUpdate;
+    }
+
+    private boolean checkPasswordUpdate(User user, User persistedUser) {
+        return !StringUtils.isEmptyOrWhitespace(user.getNewPassword())
+                && !passwordEncoder.matches(user.getPassword(), persistedUser.getPassword());
     }
 
     private void updateSpringSecurityContext(User user) {
@@ -82,8 +85,7 @@ public class UserService {
         Authentication auth = new UsernamePasswordAuthenticationToken(
                 cud,
                 user.getPassword(),
-                ContextUtils.getCurrentAuthentication().getAuthorities()
-        );
+                ContextUtils.getCurrentAuthentication().getAuthorities());
 
         SecurityContextHolder.getContext().setAuthentication(auth);
     }
@@ -98,16 +100,5 @@ public class UserService {
      */
     public Optional<User> getByEmail(String email) {
         return Optional.ofNullable(userRepository.findByEmail(email));
-    }
-
-    public User update(User user, MultipartFile image) throws IOException {
-        Optional<User> persistedUser = ContextUtils.getCurrentUser();
-
-        if (persistedUser.isEmpty() || (!StringUtils.isEmptyOrWhitespace(user.getNewPassword())
-                && !persistedUser.get().getPassword().equals(passwordEncoder.encode(user.getPassword())))) { //todo Auth
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong email or password");
-        }
-
-        return save(user, image, true);
     }
 }
