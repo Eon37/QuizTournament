@@ -30,13 +30,6 @@ public class User {
      */
     private String password;
 
-    /**
-     * Password to set
-     */
-    @Transient
-//    @Size(min = 1) //todo change
-    private String newPassword;
-
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "user")
     private List<Quiz> quizzes = new ArrayList<>();
 
@@ -46,11 +39,10 @@ public class User {
 
     private User() {}
 
-    public User(String email, String nickname, String password, String newPassword) {
+    public User(String email, String nickname, String password) {
         this.email = email;
         this.nickname = nickname;
         this.password = password;
-        this.newPassword = newPassword;
     }
 
     public void setId(Long id) {
@@ -67,10 +59,6 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public void setNewPassword(String newPassword) {
-        this.newPassword = newPassword;
     }
 
     public void setQuizzes(List<Quiz> quizzes) {
@@ -101,16 +89,12 @@ public class User {
         return password;
     }
 
-    public String getNewPassword() {
-        return newPassword;
-    }
-
     public QuizImage getImage() {
         return image;
     }
 
     public static User newEmptyUser() {
-        return new User("", "", "", "");
+        return new User("", "", "");
     }
 
     @Override

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.validation.ConstraintViolationException;
 import java.util.stream.Collectors;
 
 @ControllerAdvice
@@ -45,6 +46,16 @@ public class CustomExceptionHandling {
         return ErrorPageModel.builder()
                 .code(e.getStatus())
                 .message(e.getReason())
+                .build();
+    }
+
+    @ExceptionHandler({ConstraintViolationException.class})
+    public ModelAndView handleValidatedException(ConstraintViolationException e) {
+        return ErrorPageModel.builder()
+                .code(HttpStatus.BAD_REQUEST)
+                .message(e.getConstraintViolations().stream()
+                        .map(c -> "New password - " + c.getMessage()) //currently, only new password checked here
+                        .collect(Collectors.joining("; ")))
                 .build();
     }
 }

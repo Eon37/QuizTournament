@@ -86,17 +86,17 @@
                         <div>
                             <div style="display: flex; flex-direction:row;">
                                 <span style="height: 38px;"><img class="user-fields-icon" src="/images/1828032.png" alt=""></span>
-                                <input style="height: 38px;" type="text" th:field="*{nickname}" placeholder="Username"/>
+                                <input required style="height: 38px;" type="text" th:field="*{nickname}" placeholder="Username"/>
                             </div>
 
                             <div style="display: flex; flex-direction:row;">
                                 <span style="height: 38px;"><img class="user-fields-icon" src="/images/1828032.png" alt=""></span>
-                                <input style="height: 38px;" type="text" th:field="*{email}" placeholder="Email"/>
+                                <input required style="height: 38px;" type="text" th:field="*{email}" placeholder="Email"/>
                             </div>
 
                             <div style="display: flex; flex-direction:row;">
                                 <span style="height: 38px;"><img class="user-fields-icon" src="/images/1828032.png" alt=""></span>
-                                <input style="height: 38px;" type="password" th:field="*{newPassword}" placeholder="Password"/>
+                                <input required style="height: 38px;" type="password" th:name="newPassword" placeholder="Password"/>
                             </div>
                         </div>
 

@@ -31,12 +31,12 @@ public class UserService {
     @Autowired
     private QuizImageService quizImageService;
 
-    public User create(User user, MultipartFile image) throws IOException {
+    public User create(User user, String newPassword, MultipartFile image) throws IOException {
         if (isRegistered(user.getEmail())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User with such an amazing email already exists");
         }
 
-        user.setPassword(passwordEncoder.encode(user.getNewPassword())); //todo try newPass in @RequestPart
+        user.setPassword(passwordEncoder.encode(newPassword));
 
         user.setImage(image.isEmpty()
                 ? quizImageService.save(quizImageService.getRandomDefaultImage(ImageType.DEFAULT_USER))
@@ -45,10 +45,10 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public User update(User user, MultipartFile image) throws IOException {
+    public User update(User user, String newPassword, MultipartFile image) throws IOException {
         User userToUpdate = ContextUtils.getCurrentUserOrThrow();
 
-        if (checkPasswordUpdate(user, userToUpdate)) {
+        if (checkPasswordUpdate(user, newPassword, userToUpdate)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong email or password");
         }
 
@@ -56,9 +56,9 @@ public class UserService {
                 ? userToUpdate.getEmail()
                 : user.getEmail());
 
-        userToUpdate.setPassword(StringUtils.isEmptyOrWhitespace(user.getNewPassword())
+        userToUpdate.setPassword(StringUtils.isEmptyOrWhitespace(newPassword)
                 ? userToUpdate.getPassword()
-                : passwordEncoder.encode(user.getNewPassword()));
+                : passwordEncoder.encode(newPassword));
 
         userToUpdate.setNickname(StringUtils.isEmptyOrWhitespace(user.getNickname())
                 ? userToUpdate.getNickname()
@@ -74,8 +74,8 @@ public class UserService {
         return userToUpdate;
     }
 
-    private boolean checkPasswordUpdate(User user, User persistedUser) {
-        return !StringUtils.isEmptyOrWhitespace(user.getNewPassword())
+    private boolean checkPasswordUpdate(User user, String newPassword, User persistedUser) {
+        return !StringUtils.isEmptyOrWhitespace(newPassword)
                 && !passwordEncoder.matches(user.getPassword(), persistedUser.getPassword());
     }
 

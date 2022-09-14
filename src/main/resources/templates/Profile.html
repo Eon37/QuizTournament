@@ -77,38 +77,40 @@
     </header>
 
     <section style="margin-bottom: 20px;">
-        <h2 align="center" th:text="'My profile'"></h2>
+      <h2 align="center" th:text="'My profile'"></h2>
       <div class="c-margin-width-wide c-margin-width-mobile">
+
           <form action="#" th:action="@{/api/users/current}" th:object="${currentUser}" method="post" enctype="multipart/form-data">
-        <div style="margin-top: 50px;">
-          <div>
-            <div class="update-user-area">
-                <div>
-                    <div style="display: flex; flex-direction:row;">
-                      <span style="height: 38px;"><img class="user-fields-icon" src="/images/1828032.png" alt=""></span>
-                      <input style="height: 38px;" type="text" th:field="*{nickname}" placeholder="Username"/>
+
+            <div style="margin-top: 50px;">
+              <div>
+                <div class="update-user-area">
+                    <div>
+                        <div style="display: flex; flex-direction:row;">
+                          <span style="height: 38px;"><img class="user-fields-icon" src="/images/1828032.png" alt=""></span>
+                          <input style="height: 38px;" type="text" th:field="*{nickname}" placeholder="Username"/>
+                        </div>
+
+                        <div style="display: flex; flex-direction:row;">
+                          <span style="height: 38px;"><img class="user-fields-icon" src="/images/1828032.png" alt=""></span>
+                          <input style="height: 38px;" type="text" th:field="*{email}" placeholder="Email"/>
+                        </div>
+
+                        <div style="display: flex; flex-direction:row;">
+                          <span style="height: 38px;"><img class="user-fields-icon" src="/images/1828032.png" alt=""></span>
+                          <input style="height: 38px;" type="password" th:field="*{password}" placeholder="Old password"/>
+                        </div>
+
+                        <div style="display: flex; flex-direction:row;">
+                          <span style="height: 38px;"><img class="user-fields-icon" src="/images/1828032.png" alt=""></span>
+                          <input style="height: 38px;" type="password" th:name="newPassword" placeholder="New password"/>
+                        </div>
                     </div>
 
-                    <div style="display: flex; flex-direction:row;">
-                      <span style="height: 38px;"><img class="user-fields-icon" src="/images/1828032.png" alt=""></span>
-                      <input style="height: 38px;" type="text" th:field="*{email}" placeholder="Email"/>
+                    <div class="user-photo" style="display: flex; flex-direction: column;">
+                      <img style="width: 300px; height: 300px;" th:src="@{'data:' + ${currentUser.image.getMimeType()} + ';base64,'+ ${currentUser.image.getData()}}" data-image-width="256" data-image-height="256"/>
+                      <input style="font-size: 20px;" type="file" th:name="avatar">
                     </div>
-
-                    <div style="display: flex; flex-direction:row;">
-                      <span style="height: 38px;"><img class="user-fields-icon" src="/images/1828032.png" alt=""></span>
-                      <input style="height: 38px;" type="password" th:field="*{password}" placeholder="Old password"/>
-                    </div>
-
-                    <div style="display: flex; flex-direction:row;">
-                      <span style="height: 38px;"><img class="user-fields-icon" src="/images/1828032.png" alt=""></span>
-                      <input style="height: 38px;" type="password" th:id="*{newPassword}" th:name="*{newPassword}" placeholder="New password"/>
-                    </div>
-                </div>
-
-                <div class="user-photo" style="display: flex; flex-direction: column;">
-                  <img style="width: 300px; height: 300px;" th:src="@{'data:' + ${currentUser.image.getMimeType()} + ';base64,'+ ${currentUser.image.getData()}}" data-image-width="256" data-image-height="256"/>
-                  <input style="font-size: 20px;" type="file" th:name="avatar">
-                </div>
             </div>
 
           </div>
