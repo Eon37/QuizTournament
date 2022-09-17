@@ -36,13 +36,15 @@ public class UserService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User with such an amazing email already exists");
         }
 
-        user.setPassword(passwordEncoder.encode(newPassword));
+        String password = passwordEncoder.encode(newPassword);
 
-        user.setImage(image.isEmpty()
+        QuizImage userImage = image.isEmpty()
                 ? quizImageService.save(quizImageService.getRandomDefaultImage(ImageType.DEFAULT_USER))
-                : quizImageService.save(new QuizImage(image.getBytes(), image.getContentType(), ImageType.USER)));
+                : quizImageService.save(new QuizImage(image.getBytes(), image.getContentType(), ImageType.USER));
 
-        return userRepository.save(user);
+        User userToSave = new User(user.getEmail(), user.getNickname(), password, userImage);
+
+        return userRepository.save(userToSave);
     }
 
     public User update(User user, String newPassword, MultipartFile image) throws IOException {

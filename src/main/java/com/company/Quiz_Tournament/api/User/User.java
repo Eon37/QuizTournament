@@ -45,6 +45,13 @@ public class User {
         this.password = password;
     }
 
+    public User(String email, String nickname, String password, QuizImage userImage) {
+        this.email = email;
+        this.nickname = nickname;
+        this.password = password;
+        this.image = userImage;
+    }
+
     public void setId(Long id) {
         this.id = id;
     }
