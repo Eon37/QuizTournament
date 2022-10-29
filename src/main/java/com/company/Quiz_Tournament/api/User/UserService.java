@@ -38,7 +38,12 @@ public class UserService {
                 ? quizImageService.save(quizImageService.getRandomDefaultImage(ImageType.DEFAULT_USER))
                 : quizImageService.save(new QuizImage(image.getBytes(), image.getContentType(), ImageType.USER));
 
-        User userToSave = new User(user.getEmail(), user.getNickname(), password, userImage);
+        User userToSave = User.builder()
+                .email(user.getEmail())
+                .nickname(user.getNickname())
+                .password(password)
+                .image(userImage)
+                .build();
 
         return userRepository.save(userToSave);
     }
@@ -50,24 +55,29 @@ public class UserService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong email or password");
         }
 
-        userToUpdate.setEmail(StringUtils.isEmptyOrWhitespace(user.getEmail())
+        String email = StringUtils.isEmptyOrWhitespace(user.getEmail())
                 ? userToUpdate.getEmail()
-                : user.getEmail());
-
-        userToUpdate.setPassword(StringUtils.isEmptyOrWhitespace(newPassword)
+                : user.getEmail();
+        String password = StringUtils.isEmptyOrWhitespace(newPassword)
                 ? userToUpdate.getPassword()
-                : passwordEncoder.encode(newPassword));
-
-        userToUpdate.setNickname(StringUtils.isEmptyOrWhitespace(user.getNickname())
+                : passwordEncoder.encode(newPassword);
+        String nickname = StringUtils.isEmptyOrWhitespace(user.getNickname())
                 ? userToUpdate.getNickname()
-                : user.getNickname());
-
-        userToUpdate.setImage(image.isEmpty()
+                : user.getNickname();
+        QuizImage quizImage = image.isEmpty()
                 ? userToUpdate.getImage()
-                : quizImageService.save(new QuizImage(image.getBytes(), image.getContentType(), ImageType.USER)));
+                : quizImageService.save(new QuizImage(image.getBytes(), image.getContentType(), ImageType.USER));
 
-        userToUpdate = userRepository.save(userToUpdate);
-        ContextUtils.updateContextUser(userToUpdate);
+        User userToSave = User.builder()
+                .id(userToUpdate.getId())
+                .email(email)
+                .password(password)
+                .nickname(nickname)
+                .image(quizImage)
+                .build();
+
+        userToSave = userRepository.save(userToSave);
+        ContextUtils.updateContextUser(userToSave);
 
         return userToUpdate;
     }

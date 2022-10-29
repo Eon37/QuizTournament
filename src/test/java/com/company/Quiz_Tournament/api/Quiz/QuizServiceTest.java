@@ -288,8 +288,9 @@ public class QuizServiceTest {
     @Test
     void deleteForbiddenException() {
         //Given
-        User quizUser = User.newEmptyUser();
-        quizUser.setEmail("nagibator3000@gmail.com");
+        User quizUser = User.builder(User.newEmptyUser())
+                .email("nagibator3000@gmail.com")
+                .build();
 
         Quiz quiz = Quiz.builder()
                 .user(quizUser)

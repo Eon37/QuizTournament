@@ -53,8 +53,16 @@ public class UserServiceTest {
     void createUserAlreadyRegisteredException() {
         //Given
         String email = "test@email.com";
-        User newUser = new User(email, "New", "");
-        User persistedUser = new User(email, "Persisted", "");
+        User newUser = User.builder()
+                .email(email)
+                .nickname("New")
+                .password("")
+                .build();
+        User persistedUser = User.builder()
+                .email(email)
+                .nickname("Persisted")
+                .password("")
+                .build();
         String newPassword = "fluggegecheimen";
 
         Mockito.when(userRepository.findByEmail(email)).thenReturn(persistedUser);
@@ -72,7 +80,11 @@ public class UserServiceTest {
     void createUserSuccess() throws IOException {
         //Given
         String email = "test@email.com";
-        User user = new User(email, "New", "");
+        User user = User.builder()
+                .email(email)
+                .nickname("New")
+                .password("")
+                .build();
         String newPassword = "fluggegecheimen";
 
         Mockito.when(userRepository.findByEmail(email)).thenReturn(null);
@@ -96,13 +108,17 @@ public class UserServiceTest {
     @Test
     void updateUserWithoutUpdatingPasswordSuccess() throws IOException {
         //Given
-        User persistedUser = new User("test@email.com", "test",
-                                      passwordEncoder.encode("password"));
+        User persistedUser = User.builder()
+                .email("test@email.com")
+                .nickname("test")
+                .password("password")
+                .build();
         addContextUser(persistedUser);
 
-        User user = User.newEmptyUser();
         String newNickname = "Chief Twit";
-        user.setNickname(newNickname);
+        User user = User.builder(persistedUser)
+                .nickname(newNickname)
+                .build();
 
         ArgumentCaptor<User> savedUser = ArgumentCaptor.forClass(User.class);
         Mockito.when(userRepository.save(savedUser.capture())).thenReturn(user);
@@ -122,10 +138,14 @@ public class UserServiceTest {
         //Given
         String oldPassword = "password";
         String newPassword = "newPassword";
-        User persistedUser = new User("test@email.com", "test", oldPassword);
+        User persistedUser = User.builder()
+                .email("test@email.com")
+                .nickname("test")
+                .password(oldPassword)
+                .build();
         addContextUser(persistedUser);
 
-        User user = new User(persistedUser.getEmail(), persistedUser.getNickname(), oldPassword);
+        User user = User.builder(persistedUser).build();
 
         Mockito.when(passwordEncoder.matches(user.getPassword(), persistedUser.getPassword())).thenReturn(true);
         Mockito.when(passwordEncoder.encode(newPassword)).thenReturn(newPassword);
@@ -148,10 +168,16 @@ public class UserServiceTest {
         String oldPassword = "password";
         String oldWrongPassword = "wrongPassword";
         String newPassword = "newPassword";
-        User persistedUser = new User("test@email.com", "test", oldPassword);
+        User persistedUser = User.builder()
+                .email("test@email.com")
+                .nickname("test")
+                .password(oldPassword)
+                .build();
         addContextUser(persistedUser);
 
-        User user = new User(persistedUser.getEmail(), persistedUser.getNickname(), oldWrongPassword);
+        User user = User.builder(persistedUser)
+                .password(oldWrongPassword)
+                .build();
 
         Mockito.when(passwordEncoder.matches(user.getPassword(), persistedUser.getPassword()))
                 .thenReturn(user.getPassword().equals(persistedUser.getPassword()));

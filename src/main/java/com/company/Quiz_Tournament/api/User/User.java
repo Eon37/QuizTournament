@@ -5,6 +5,7 @@ import com.company.Quiz_Tournament.api.QuizImage.QuizImage;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
@@ -39,41 +40,18 @@ public class User {
 
     private User() {}
 
-    public User(String email, String nickname, String password) {
-        this.email = email;
-        this.nickname = nickname;
-        this.password = password;
-    }
+//    public User(String email, String nickname, String password) {
+//        this.email = email;
+//        this.nickname = nickname;
+//        this.password = password;
+//    }
 
-    public User(String email, String nickname, String password, QuizImage userImage) {
+    public User(Long id, String email, String nickname, String password, List<Quiz> quizzes, QuizImage userImage) {
         this.email = email;
         this.nickname = nickname;
         this.password = password;
+        this.quizzes = new ArrayList<>(quizzes);
         this.image = userImage;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public void setQuizzes(List<Quiz> quizzes) {
-        this.quizzes = quizzes;
-    }
-
-    public void setImage(QuizImage image) {
-        this.image = image;
     }
 
     public List<Quiz> getQuizzes() {
@@ -101,7 +79,7 @@ public class User {
     }
 
     public static User newEmptyUser() {
-        return new User("", "", "");
+        return builder().email("").nickname("").password("").build();
     }
 
     @Override
@@ -116,7 +94,68 @@ public class User {
 
     @Override
     public int hashCode() {
-        int result = email.hashCode();
-        return result;
+        return email.hashCode();
+    }
+
+    public static UserBuilder builder() {
+        return new UserBuilder();
+    }
+
+    public static UserBuilder builder(User other) {
+        return new UserBuilder(other);
+    }
+
+    public static class UserBuilder {
+        private Long id;
+        private String email;
+        private String nickname;
+        private String password;
+        private List<Quiz> quizzes = new ArrayList<>();
+        private QuizImage image = QuizImage.emptyQuizImage();
+
+        private UserBuilder() {}
+
+        private UserBuilder(User other) {
+            id = other.getId();
+            email = other.getEmail();
+            nickname = other.getNickname();
+            password = other.getPassword();
+            quizzes = other.getQuizzes();
+            image = other.getImage();
+        }
+
+        public UserBuilder id(@NotNull Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public UserBuilder email(@Pattern(regexp = "(\\w|\\d)+@\\w+\\.\\w+") String email) {
+            this.email = email;
+            return this;
+        }
+
+        public UserBuilder nickname(@NotBlank String nickname) {
+            this.nickname = nickname;
+            return this;
+        }
+
+        public UserBuilder password(@Size(min = 8) String password) {
+            this.password = password;
+            return this;
+        }
+
+        public UserBuilder quizzes(@NotNull List<Quiz> quizzes) {
+            this.quizzes = new ArrayList<>(quizzes);
+            return this;
+        }
+
+        public UserBuilder image(@NotNull QuizImage image) {
+            this.image = image;
+            return this;
+        }
+
+        public User build() {
+            return new User(id, email, nickname, password, quizzes, image);
+        }
     }
 }

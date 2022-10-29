@@ -11,7 +11,7 @@ public class CreateQuizPageModel extends AbstractPageModel {
     }
 
     ///STEP BUILDER
-    public static CreateQuizPageModelBuilder builder() {
+    public static TemplateQuiz builder() {
         return new CreateQuizPageModelBuilder();
     }
 
