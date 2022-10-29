@@ -9,13 +9,15 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
+
 @Controller
 public class CustomErrorController implements ErrorController {
 
     private static final Logger logger = LoggerFactory.getLogger(CustomErrorController.class);
 
     @RequestMapping("/error")
-    public ModelAndView handleError() {
+    public ModelAndView handleError(HttpServletRequest request) {
         logger.warn("WhiteLabelErrorPage error");
 
         return ErrorPageModel.builder()

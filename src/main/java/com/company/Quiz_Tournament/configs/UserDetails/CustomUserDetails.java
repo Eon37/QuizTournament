@@ -49,13 +49,13 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        if (user == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect username or password");
+        if (user == null) return "";
         return this.user.getEmail();
     }
 
     @Override
     public String getPassword() {
-        if (user == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect username or password");
+        if (user == null) return "";
         return this.user.getPassword();
     }
 }
