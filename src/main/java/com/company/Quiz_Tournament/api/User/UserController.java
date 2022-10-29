@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.io.IOException;
 import java.util.List;
@@ -66,7 +67,7 @@ public class UserController {
 
     @PostMapping(path = "/api/users/current")
     public ModelAndView updateUser(@Valid @ModelAttribute("currentUser") User user,
-                                   @RequestParam("newPassword") @Size(min = 8) String newPassword,
+                                   @RequestParam("newPassword") @Pattern(regexp = "^$|.{8,}") String newPassword,
                                    @RequestPart("avatar") MultipartFile image) throws IOException {
         user = userService.update(user, newPassword, image);
         List<CompletedQuizzes> completedQuizzes = completedQuizzesService.getByUser(user, PageRequest.of(0, Integer.MAX_VALUE)).getContent();

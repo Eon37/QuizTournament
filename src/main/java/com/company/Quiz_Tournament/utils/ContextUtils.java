@@ -3,6 +3,7 @@ package com.company.Quiz_Tournament.utils;
 import com.company.Quiz_Tournament.api.User.User;
 import com.company.Quiz_Tournament.configs.UserDetails.CustomUserDetails;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.server.ResponseStatusException;
@@ -40,5 +41,16 @@ public class ContextUtils {
 
     public static Authentication getCurrentAuthentication() {
         return SecurityContextHolder.getContext().getAuthentication();
+    }
+
+    public static void updateContextUser(User user) {
+        CustomUserDetails cud = new CustomUserDetails(user);
+
+        Authentication auth = new UsernamePasswordAuthenticationToken(
+                cud,
+                user.getPassword(),
+                getCurrentAuthentication().getAuthorities());
+
+        SecurityContextHolder.getContext().setAuthentication(auth);
     }
 }

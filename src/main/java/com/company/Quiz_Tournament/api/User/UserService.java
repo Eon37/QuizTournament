@@ -2,14 +2,10 @@ package com.company.Quiz_Tournament.api.User;
 
 import com.company.Quiz_Tournament.api.QuizImage.ImageType;
 import com.company.Quiz_Tournament.api.QuizImage.QuizImage;
-import com.company.Quiz_Tournament.configs.UserDetails.CustomUserDetails;
 import com.company.Quiz_Tournament.utils.ContextUtils;
 import com.company.Quiz_Tournament.api.QuizImage.QuizImageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -71,7 +67,7 @@ public class UserService {
                 : quizImageService.save(new QuizImage(image.getBytes(), image.getContentType(), ImageType.USER)));
 
         userToUpdate = userRepository.save(userToUpdate);
-        updateSpringSecurityContext(userToUpdate);
+        ContextUtils.updateContextUser(userToUpdate);
 
         return userToUpdate;
     }
@@ -81,16 +77,6 @@ public class UserService {
                 && !passwordEncoder.matches(user.getPassword(), persistedUser.getPassword());
     }
 
-    private void updateSpringSecurityContext(User user) {
-        CustomUserDetails cud = new CustomUserDetails(user);
-
-        Authentication auth = new UsernamePasswordAuthenticationToken(
-                cud,
-                user.getPassword(),
-                ContextUtils.getCurrentAuthentication().getAuthorities());
-
-        SecurityContextHolder.getContext().setAuthentication(auth);
-    }
 
     public boolean isRegistered(String email) {
         return getByEmail(email).isPresent();
