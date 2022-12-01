@@ -3,8 +3,11 @@ plugins {
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id 'java'
 	id 'idea'
+	id 'application'
 }
-
+application {
+	mainClassName = 'com.company.Quiz_Tournament.QuizTournamentApplication'
+}
 idea {
 	module {
 		downloadJavadoc = true
@@ -42,5 +45,10 @@ dependencies {
 }
 
 tasks.named('test') {
+	environment = [
+		JDBC_DATABASE_URL: "$JDBC_DATABASE_URL",
+		JDBC_DATABASE_USERNAME: "$JDBC_DATABASE_USERNAME",
+		JDBC_DATABASE_PASSWORD: "$JDBC_DATABASE_PASSWORD"
+	]
 	useJUnitPlatform()
 }
