@@ -41,7 +41,7 @@ To build and run you should already have a database and provide the following va
 
 ### From command line
 
-To build jar you can specify variables in gradle.properites and run from project's root
+To build jar you can specify variables in gradle.properites (for testing purposes) and run from project's root
 ```
 ./gradlew clean build
 ```
