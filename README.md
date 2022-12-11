@@ -62,7 +62,7 @@ To build jar you can specify variables in gradle.properites (for testing purpose
 ```
 To execute output jar you can run from project's root
 ```
-java -jar ./build/libs/Quiz_Tournament-0.0.1-SNAPSHOT.jar
+java -jar ./build/libs/Quiz_Tournament-0.0.1-SNAPSHOT.jar --spring.profiles.active=local
 ```
 
 ## Further plans

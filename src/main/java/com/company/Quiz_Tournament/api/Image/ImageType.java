@@ -1,4 +1,4 @@
-package com.company.Quiz_Tournament.api.QuizImage;
+package com.company.Quiz_Tournament.api.Image;
 
 public enum ImageType {
     QUIZ,

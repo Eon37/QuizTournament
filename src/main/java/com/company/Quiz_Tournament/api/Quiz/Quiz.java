@@ -1,8 +1,7 @@
 package com.company.Quiz_Tournament.api.Quiz;
 
 import com.company.Quiz_Tournament.api.Image.ImageService;
-import com.company.Quiz_Tournament.api.QuizImage.ImageType;
-import com.company.Quiz_Tournament.api.QuizImage.QuizImage;
+import com.company.Quiz_Tournament.api.Image.ImageType;
 import com.company.Quiz_Tournament.api.User.User;
 import com.company.Quiz_Tournament.constants.CommonConstants;
 import com.company.Quiz_Tournament.constants.EmptyQuizConstants;

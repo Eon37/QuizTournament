@@ -1,10 +1,8 @@
 package com.company.Quiz_Tournament.api.Image;
 
 import com.company.Quiz_Tournament.CloudFlareAccess.CloudFlareAccessService;
-import com.company.Quiz_Tournament.api.QuizImage.ImageType;
 import com.company.Quiz_Tournament.constants.CommonConstants;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;

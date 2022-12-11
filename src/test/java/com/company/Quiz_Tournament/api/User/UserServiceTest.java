@@ -1,6 +1,6 @@
 package com.company.Quiz_Tournament.api.User;
 
-import com.company.Quiz_Tournament.api.QuizImage.ImageType;
+import com.company.Quiz_Tournament.api.Image.ImageType;
 import com.company.Quiz_Tournament.api.QuizImage.QuizImage;
 import com.company.Quiz_Tournament.api.QuizImage.QuizImageService;
 import com.company.Quiz_Tournament.configs.UserDetails.CustomUserDetails;
