@@ -38,7 +38,7 @@
                         <a href="#user-menu">
                             <div class="header-user-image-container">
                                 <img th:if="${currentUser != null}" class="header-user"
-                                     th:src="@{'data:' + ${currentUser.image.getMimeType()} + ';base64,'+ ${currentUser.image.getData()}}"
+                                     th:src="${currentUser.image}"
                                      alt="" data-image-width="100" data-image-height="100">
                                 <img th:if="${currentUser == null}" class="header-user" th:src="@{'/images/users/user-header.png'}"
                                      alt="" data-image-width="30" data-image-height="30">

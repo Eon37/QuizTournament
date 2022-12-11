@@ -1,9 +1,8 @@
 package com.company.Quiz_Tournament.api.User;
 
+import com.company.Quiz_Tournament.api.Image.ImageService;
 import com.company.Quiz_Tournament.api.QuizImage.ImageType;
-import com.company.Quiz_Tournament.api.QuizImage.QuizImage;
 import com.company.Quiz_Tournament.utils.ContextUtils;
-import com.company.Quiz_Tournament.api.QuizImage.QuizImageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,18 +24,18 @@ public class UserService {
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    private QuizImageService quizImageService;
+    private ImageService imageService;
 
-    public User create(User user, String newPassword, MultipartFile image) throws IOException {
+    public User create(User user, String newPassword, MultipartFile image) {
         if (isRegistered(user.getEmail())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User with such an amazing email already exists");
         }
 
         String password = passwordEncoder.encode(newPassword);
 
-        QuizImage userImage = image.isEmpty()
-                ? quizImageService.save(quizImageService.getRandomDefaultImage(ImageType.DEFAULT_USER))
-                : quizImageService.save(new QuizImage(image.getBytes(), image.getContentType(), ImageType.USER));
+        String userImage = image.isEmpty()
+                ? ImageService.getRandomDefaultImageUrl(ImageType.DEFAULT_USER)
+                : imageService.save(image, ImageType.USER);
 
         User userToSave = User.builder()
                 .email(user.getEmail())
@@ -64,16 +63,16 @@ public class UserService {
         String nickname = StringUtils.isEmptyOrWhitespace(user.getNickname())
                 ? userToUpdate.getNickname()
                 : user.getNickname();
-        QuizImage quizImage = image.isEmpty()
+        String userImage = image.isEmpty()
                 ? userToUpdate.getImage()
-                : quizImageService.save(new QuizImage(image.getBytes(), image.getContentType(), ImageType.USER));
+                : imageService.save(image, ImageType.USER);
 
         User userToSave = User.builder()
                 .id(userToUpdate.getId())
                 .email(email)
                 .password(password)
                 .nickname(nickname)
-                .image(quizImage)
+                .image(userImage)
                 .build();
 
         userToSave = userRepository.save(userToSave);

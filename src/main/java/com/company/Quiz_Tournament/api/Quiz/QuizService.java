@@ -4,6 +4,7 @@ import com.company.Quiz_Tournament.api.AnswerInterceptor;
 import com.company.Quiz_Tournament.api.CompletedQuizzes.CompletedQuizzes;
 import com.company.Quiz_Tournament.api.CompletedQuizzes.CompletedQuizzesService;
 import com.company.Quiz_Tournament.api.FeedBack;
+import com.company.Quiz_Tournament.api.Image.ImageService;
 import com.company.Quiz_Tournament.api.QuizImage.ImageType;
 import com.company.Quiz_Tournament.api.QuizImage.QuizImage;
 import com.company.Quiz_Tournament.api.QuizImage.QuizImageService;
@@ -36,7 +37,7 @@ public class QuizService {
     private CompletedQuizzesService completedQuizzesService;
 
     @Autowired
-    private QuizImageService quizImageService;
+    private ImageService imageService;
 
     public Quiz save(Quiz quiz, MultipartFile image) throws IOException {
         User user = ContextUtils.getCurrentUserOrThrow();
@@ -47,9 +48,9 @@ public class QuizService {
     private Quiz createQuiz(Quiz quiz, MultipartFile image, User user) throws IOException {
         List<String> options = prepareOptions(quiz.getOptions());
         List<Integer> answer = filteredAnswer(quiz.getAnswer(), options.size());
-        QuizImage quizImage = image.isEmpty()
-                ? quizImageService.save(quizImageService.getRandomDefaultImage(ImageType.DEFAULT_QUIZ))
-                : quizImageService.save(new QuizImage(image.getBytes(), image.getContentType(), ImageType.QUIZ));
+        String quizImage = image.isEmpty()
+                ? ImageService.getRandomDefaultImageUrl(ImageType.DEFAULT_QUIZ)
+                : imageService.save(image, ImageType.QUIZ);
 
         Quiz quizToSave = Quiz.builder()
                 .title(quiz.getTitle())
@@ -82,9 +83,9 @@ public class QuizService {
         String text = StringUtils.isEmptyOrWhitespace(quiz.getText())
                 ? persistedQuiz.getText()
                 : quiz.getText();
-        QuizImage quizImage = image.isEmpty()
+        String quizImage = image.isEmpty()
                 ? persistedQuiz.getImage()
-                : quizImageService.save(new QuizImage(image.getBytes(), image.getContentType(), ImageType.QUIZ));
+                : imageService.save(image, ImageType.QUIZ);
         List<String> options = prepareOptions(quiz.getOptions());
         List<Integer> answer = filteredAnswer(quiz.getAnswer(), options.size());
 
