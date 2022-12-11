@@ -34,10 +34,24 @@ Quiz Tournament is a web application that allows you to solve and create quizzes
 
 ## Build & run locally
 
-To build and run you should already have a database and provide the following variables for connection:
-- JDBC_DATABASE_URL
-- JDBC_DATABASE_USERNAME
-- JDBC_DATABASE_PASSWORD
+To build and run you should already have a database and provide the following variables (in application.properties) for connection:
+- spring.datasource.url
+- spring.datasource.username
+- spring.datasource.password
+
+Also, you will need an S3-compatible storage for storing images. Configure it with these variables: 
+
+- r2.accessKey
+- r2.secretKey
+- r2.bucketName
+- r2.baseUrl *url for creating client bean*
+- r2.publicUrl *public bucket url*
+
+You can create application-local.properties which is included in gitignore and specify variables there.
+Then set jvm program argument:
+```
+--spring.profiles.active=local
+```
 
 ### From command line
 
@@ -47,12 +61,11 @@ To build jar you can specify variables in gradle.properites and run from project
 ```
 To execute output jar you can run from project's root
 ```
-java -jar -DJDBC_DATABASE_URL=<your_db_url> -DJDBC_DATABASE_USERNAME=<your_db_username> -DJDBC_DATABASE_PASSWORD=<your_db_password> ./build/libs/Quiz_Tournament-0.0.1-SNAPSHOT.jar
+java -jar ./build/libs/Quiz_Tournament-0.0.1-SNAPSHOT.jar
 ```
 
 ## Further plans
 - Add API documentation
-- Improve images storage
 - Tags cloud
 - Add tournament mode
 - Make customizable win/lose feedback
