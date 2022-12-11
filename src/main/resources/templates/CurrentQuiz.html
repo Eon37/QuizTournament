@@ -45,7 +45,7 @@
               <a href="#user-menu">
                 <div class="header-user-image-container">
                   <img th:if="${currentUser != null}" class="header-user"
-                       th:src="@{'data:' + ${currentUser.image.getMimeType()} + ';base64,'+ ${currentUser.image.getData()}}"
+                       th:src="${currentUser.image}"
                        alt="" data-image-width="100" data-image-height="100">
                   <img th:if="${currentUser == null}" class="header-user" th:src="@{'/images/users/user-header.png'}"
                        alt="" data-image-width="30" data-image-height="30">
@@ -85,7 +85,7 @@
     <section style="margin-top: 50px;">
       <div class="main-area">
       <div>
-          <img class="q_img" th:src="@{'data:' + ${quiz.image.getMimeType()} + ';base64,'+ ${quiz.image.getData()}}">
+          <img class="q_img" th:src="${quiz.image}">
       </div>
 
         <div class="pad-left">

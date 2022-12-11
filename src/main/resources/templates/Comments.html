@@ -35,7 +35,7 @@
                   <div class="header-user-gradient-border">
                       <a href="#user-menu">
                           <div class="header-user-image-container">
-                              <img th:if="${currentUser != null}" class="header-user" th:src="@{'data:' + ${currentUser.image.getMimeType()} + ';base64,'+ ${currentUser.image.getData()}}" alt="" data-image-width="100" data-image-height="100">
+                              <img th:if="${currentUser != null}" class="header-user" th:src="${currentUser.image}" alt="" data-image-width="100" data-image-height="100">
                               <img th:if="${currentUser == null}" class="header-user" th:src="@{'/images/users/user-header.png'}" alt="" data-image-width="30" data-image-height="30">
                           </div>
                       </a>
@@ -91,7 +91,7 @@
             <th:block th:each="comm : ${comments}">
               <div class="com-background c-margin-width-wide c-margin-width-mobile">
                 <div style="display: flex; align-items: center; flex-direction: row;">
-                  <img class="com-image" th:src="@{'data:' + ${comm.user.image.getMimeType()} + ';base64,' + ${comm.user.image.getData()}}" alt="" data-image-width="60" data-image-height="60">
+                  <img class="com-image" th:src="${comm.user.image}" alt="" data-image-width="60" data-image-height="60">
                   <div style="display: flex; align-items: start; flex-direction: column;">
                     <p class="com-text" style="color: blue; margin-top: 0px;" th:text="${comm.user.nickname}"></p>
                     <p class="com-text" th:text="${comm.text}"></p>

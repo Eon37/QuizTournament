@@ -1,5 +1,7 @@
 package com.company.Quiz_Tournament.api.Quiz;
 
+import com.company.Quiz_Tournament.api.Image.ImageService;
+import com.company.Quiz_Tournament.api.QuizImage.ImageType;
 import com.company.Quiz_Tournament.api.QuizImage.QuizImage;
 import com.company.Quiz_Tournament.api.User.User;
 import com.company.Quiz_Tournament.constants.CommonConstants;
@@ -29,9 +31,7 @@ public class Quiz {
     @NotBlank
     private String text;
 
-    @ManyToOne
-    @JoinColumn(name = "imageID")
-    private QuizImage image = QuizImage.emptyQuizImage();
+    private String image;
 
     @ManyToOne
     @JoinColumn(name = "UserID")
@@ -49,7 +49,7 @@ public class Quiz {
 
     private Quiz() {}
 
-    public Quiz(Long id, String title, String description, String text, QuizImage image, User user,
+    public Quiz(Long id, String title, String description, String text, String image, User user,
                  List<String> options, List<Integer> answer) {
         this.id = id;
         this.title = title;
@@ -81,7 +81,7 @@ public class Quiz {
         return user;
     }
 
-    public QuizImage getImage() {
+    public String getImage() {
         return image;
     }
 
@@ -98,7 +98,7 @@ public class Quiz {
                 .title(EmptyQuizConstants.TITLE)
                 .description(EmptyQuizConstants.DESCRIPTION)
                 .text(EmptyQuizConstants.TEXT)
-                .image(QuizImage.emptyQuizImage())
+                .image(ImageService.getRandomDefaultImageUrl(ImageType.DEFAULT_QUIZ))
                 .user(ContextUtils.getCurrentUserOrThrow())
                 .options(new ArrayList<>(), fillEmptyOptions)
                 .answer(Collections.emptyList())
@@ -159,7 +159,7 @@ public class Quiz {
         private String title;
         private String description;
         private String text;
-        private QuizImage image = QuizImage.emptyQuizImage();
+        private String image;
         private User user;
         private List<String> options = new ArrayList<>(CommonConstants.DEFAULT_INT_OPTIONS_SIZE);
         private List<Integer> answer = new ArrayList<>(CommonConstants.DEFAULT_INT_OPTIONS_SIZE);
@@ -203,7 +203,7 @@ public class Quiz {
             return this;
         }
 
-        public QuizBuilder image(@NotNull QuizImage image) {
+        public QuizBuilder image(@NotNull String image) {
             this.image = image;
             return this;
         }

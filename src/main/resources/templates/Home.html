@@ -38,7 +38,7 @@
               <a href="#user-menu">
                 <div class="header-user-image-container">
                   <img th:if="${currentUser != null}" class="header-user"
-                       th:src="@{'data:' + ${currentUser.image.getMimeType()} + ';base64,'+ ${currentUser.image.getData()}}"
+                       th:src="${currentUser.image}"
                        alt="" data-image-width="100" data-image-height="100">
                   <img th:if="${currentUser == null}" class="header-user" th:src="@{'/images/users/user-header.png'}"
                        alt="" data-image-width="30" data-image-height="30">
@@ -83,7 +83,7 @@
 
             <th:block th:each="quiz : ${quizzes}">
               <div class="grid-cell">
-                <div th:if="${!quizzes.isEmpty() && quizzes.size() >= 1 && quiz != null}" th:style="'width: 100%; background-image: url(data:' + ${quiz.image.getMimeType()} + ';base64,' + ${quiz.image.getData()} + '); background-size: cover;'">
+                <div th:if="${!quizzes.isEmpty() && quizzes.size() >= 1 && quiz != null}" th:style="'width: 100%; background-image: url(' + ${quiz.image} + '); background-size: cover;'">
                   <div class="grid-cell-info">
 
                     <div style="padding-left: 10px; padding-right: 10px; padding-top: 10px; z-index: 10;">

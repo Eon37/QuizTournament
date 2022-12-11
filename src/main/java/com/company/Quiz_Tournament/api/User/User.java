@@ -1,7 +1,6 @@
 package com.company.Quiz_Tournament.api.User;
 
 import com.company.Quiz_Tournament.api.Quiz.Quiz;
-import com.company.Quiz_Tournament.api.QuizImage.QuizImage;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -9,6 +8,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Entity(name = "Users")
@@ -34,24 +34,17 @@ public class User {
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "user")
     private List<Quiz> quizzes = new ArrayList<>();
 
-    @ManyToOne
-    @JoinColumn(name = "imageID")
-    private QuizImage image = QuizImage.emptyQuizImage();
+    private String image;
 
     private User() {}
 
-//    public User(String email, String nickname, String password) {
-//        this.email = email;
-//        this.nickname = nickname;
-//        this.password = password;
-//    }
-
-    public User(Long id, String email, String nickname, String password, List<Quiz> quizzes, QuizImage userImage) {
+    public User(Long id, String email, String nickname, String password, List<Quiz> quizzes, String image) {
+        this.id = id;
         this.email = email;
         this.nickname = nickname;
         this.password = password;
-        this.quizzes = new ArrayList<>(quizzes);
-        this.image = userImage;
+        this.quizzes = new ArrayList<>(quizzes == null? Collections.emptyList() : quizzes);
+        this.image = image;
     }
 
     public List<Quiz> getQuizzes() {
@@ -74,7 +67,7 @@ public class User {
         return password;
     }
 
-    public QuizImage getImage() {
+    public String getImage() {
         return image;
     }
 
@@ -111,7 +104,7 @@ public class User {
         private String nickname;
         private String password;
         private List<Quiz> quizzes = new ArrayList<>();
-        private QuizImage image = QuizImage.emptyQuizImage();
+        private String imgUrl;
 
         private UserBuilder() {}
 
@@ -121,7 +114,6 @@ public class User {
             nickname = other.getNickname();
             password = other.getPassword();
             quizzes = other.getQuizzes();
-            image = other.getImage();
         }
 
         public UserBuilder id(@NotNull Long id) {
@@ -149,13 +141,13 @@ public class User {
             return this;
         }
 
-        public UserBuilder image(@NotNull QuizImage image) {
-            this.image = image;
+        public UserBuilder image(@NotNull String imgUrl) {
+            this.imgUrl = imgUrl;
             return this;
         }
 
         public User build() {
-            return new User(id, email, nickname, password, quizzes, image);
+            return new User(id, email, nickname, password, quizzes, imgUrl);
         }
     }
 }
