@@ -1,4 +1,4 @@
-# Quiz Tournament
+# [Quiz Tournament](https://quiz-tournament.fly.dev)
 
 - [About](#about)
 - [Features](#features)
