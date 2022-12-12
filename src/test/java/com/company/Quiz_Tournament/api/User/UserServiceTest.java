@@ -1,8 +1,5 @@
 package com.company.Quiz_Tournament.api.User;
 
-import com.company.Quiz_Tournament.api.Image.ImageType;
-import com.company.Quiz_Tournament.api.QuizImage.QuizImage;
-import com.company.Quiz_Tournament.api.QuizImage.QuizImageService;
 import com.company.Quiz_Tournament.configs.UserDetails.CustomUserDetails;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,8 +29,6 @@ public class UserServiceTest {
     private UserService userService;
     @Mock
     private UserRepository userRepository;
-    @Mock
-    private QuizImageService quizImageService;
     @Mock
     private PasswordEncoder passwordEncoder;
 
@@ -89,10 +84,6 @@ public class UserServiceTest {
 
         Mockito.when(userRepository.findByEmail(email)).thenReturn(null);
         Mockito.when(passwordEncoder.encode(newPassword)).thenReturn(newPassword);
-
-        QuizImage emptyImage = QuizImage.emptyQuizImage();
-        Mockito.when(quizImageService.getRandomDefaultImage(ImageType.DEFAULT_USER)).thenReturn(emptyImage);
-        Mockito.when(quizImageService.save(emptyImage)).thenReturn(emptyImage);
 
         ArgumentCaptor<User> savedUser = ArgumentCaptor.forClass(User.class);
         Mockito.when(userRepository.save(savedUser.capture())).thenReturn(user);

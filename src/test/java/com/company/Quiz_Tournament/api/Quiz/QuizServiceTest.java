@@ -4,9 +4,6 @@ import com.company.Quiz_Tournament.api.AnswerInterceptor;
 import com.company.Quiz_Tournament.api.CompletedQuizzes.CompletedQuizzes;
 import com.company.Quiz_Tournament.api.CompletedQuizzes.CompletedQuizzesService;
 import com.company.Quiz_Tournament.api.FeedBack;
-import com.company.Quiz_Tournament.api.Image.ImageType;
-import com.company.Quiz_Tournament.api.QuizImage.QuizImage;
-import com.company.Quiz_Tournament.api.QuizImage.QuizImageService;
 import com.company.Quiz_Tournament.api.User.User;
 import com.company.Quiz_Tournament.configs.UserDetails.CustomUserDetails;
 import com.company.Quiz_Tournament.utils.ContextUtils;
@@ -41,8 +38,6 @@ public class QuizServiceTest {
     private QuizService quizService;
     @Mock
     private QuizRepository quizRepository;
-    @Mock
-    private QuizImageService quizImageService;
     @Mock
     private CompletedQuizzesService completedQuizzesService;
 
@@ -112,10 +107,6 @@ public class QuizServiceTest {
         Quiz quiz = Quiz.builder(Quiz.newEmptyQuiz(false))
                 .options(initialOptions, true)
                 .build();
-        QuizImage emptyImage = QuizImage.emptyQuizImage();
-
-        Mockito.when(quizImageService.getRandomDefaultImage(ImageType.DEFAULT_QUIZ)).thenReturn(emptyImage);
-        Mockito.when(quizImageService.save(emptyImage)).thenReturn(emptyImage);
 
         ArgumentCaptor<Quiz> savedQuiz = ArgumentCaptor.forClass(Quiz.class);
         Mockito.when(quizRepository.save(savedQuiz.capture())).thenReturn(quiz);
@@ -134,10 +125,6 @@ public class QuizServiceTest {
         Quiz quiz = Quiz.builder(Quiz.newEmptyQuiz(false))
                 .options(Arrays.asList("1", "1", "2", "69", "69"), true)
                 .build();
-        QuizImage emptyImage = QuizImage.emptyQuizImage();
-
-        Mockito.when(quizImageService.getRandomDefaultImage(ImageType.DEFAULT_QUIZ)).thenReturn(emptyImage);
-        Mockito.when(quizImageService.save(emptyImage)).thenReturn(emptyImage);
 
         ArgumentCaptor<Quiz> savedQuiz = ArgumentCaptor.forClass(Quiz.class);
         Mockito.when(quizRepository.save(savedQuiz.capture())).thenReturn(quiz);
@@ -156,10 +143,6 @@ public class QuizServiceTest {
                 .options(Arrays.asList("1", "2", "69"), true)
                 .answer(Arrays.asList(1, 2))
                 .build();
-        QuizImage emptyImage = QuizImage.emptyQuizImage();
-
-        Mockito.when(quizImageService.getRandomDefaultImage(ImageType.DEFAULT_QUIZ)).thenReturn(emptyImage);
-        Mockito.when(quizImageService.save(emptyImage)).thenReturn(emptyImage);
 
         ArgumentCaptor<Quiz> savedQuiz = ArgumentCaptor.forClass(Quiz.class);
         Mockito.when(quizRepository.save(savedQuiz.capture())).thenReturn(quiz);
@@ -178,10 +161,6 @@ public class QuizServiceTest {
                 .options(Arrays.asList("1", "2", "69"), true)
                 .answer(Arrays.asList(1, 2, 3))
                 .build();
-        QuizImage emptyImage = QuizImage.emptyQuizImage();
-
-        Mockito.when(quizImageService.getRandomDefaultImage(ImageType.DEFAULT_QUIZ)).thenReturn(emptyImage);
-        Mockito.when(quizImageService.save(emptyImage)).thenReturn(emptyImage);
 
         ArgumentCaptor<Quiz> savedQuiz = ArgumentCaptor.forClass(Quiz.class);
         Mockito.when(quizRepository.save(savedQuiz.capture())).thenReturn(quiz);
@@ -200,10 +179,6 @@ public class QuizServiceTest {
                 .options(Arrays.asList("1", "1", "2", "2", "69"), true)
                 .answer(Arrays.asList(1, 2, 3))
                 .build();
-        QuizImage emptyImage = QuizImage.emptyQuizImage();
-
-        Mockito.when(quizImageService.getRandomDefaultImage(ImageType.DEFAULT_QUIZ)).thenReturn(emptyImage);
-        Mockito.when(quizImageService.save(emptyImage)).thenReturn(emptyImage);
 
         ArgumentCaptor<Quiz> savedQuiz = ArgumentCaptor.forClass(Quiz.class);
         Mockito.when(quizRepository.save(savedQuiz.capture())).thenReturn(quiz);
