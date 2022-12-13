@@ -1,4 +1,4 @@
-# [Quiz Tournament](https://quiz-tournament.fly.dev)
+# Quiz Tournament
 
 - [About](#about)
 - [Features](#features)
@@ -9,6 +9,7 @@
 ## About
 
 Quiz Tournament is a web application that allows you to solve and create quizzes, to have thought-provoking, thrilling, touching or hilarious discussions in the comments section and to have fun in general.
+<br /><br />You can see this thing [here](https://quiz-tournament.fly.dev/).
 
 <p align="center">
 	<img src="https://user-images.githubusercontent.com/45975127/185566384-adb08e6a-c3ab-4305-bea6-281ea04367b7.PNG" width="600" height="350">
